@@ -1,0 +1,10 @@
+*.swp
+.*.tmp
+.remote-sync.json
+.sync-config.cson
+.DS_Store
+.idea
+*.iml
+node_modules/
+npm-debug.log
+yarn-error.log
