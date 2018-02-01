@@ -39,7 +39,7 @@ export default class BrowserCapabilities {
 
                 const version = capabilities.version;
 
-                if (!version || !this.isVersionGreaterThan(version)) {
+                if (!version || !browser.isVersionGreaterThan(version)) {
                     capabilitiesByVersion = capabilities;
                     break;
                 }
