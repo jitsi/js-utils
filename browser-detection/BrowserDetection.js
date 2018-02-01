@@ -141,8 +141,21 @@ export default class BrowserDetection {
      * @param {string} browserInfo.name - The name of the browser.
      * @param {string} browserInfo.version - The version of the browser.
      */
-    constructor(browserInfo = _detect()) {
-        const { name, version } = browserInfo;
+    constructor(browserInfo) {
+        let name, version;
+
+        if (typeof browserInfo === 'undefined') {
+            const detectedBrowserInfo = _detect();
+
+            name = detectedBrowserInfo.name;
+            version = detectedBrowserInfo.version;
+        } else if (browserInfo.name in bowserNameToJitsiName) {
+            name = bowserNameToJitsiName[browserInfo.name];
+            version = browserInfo.version;
+        } else {
+            name = UNKNOWN;
+            version = undefined;
+        }
 
         this._name = name;
         this._version = version;
