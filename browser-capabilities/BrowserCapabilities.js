@@ -29,8 +29,21 @@ export default class BrowserCapabilities {
                 && typeof browser.getVersion() === 'string') {
             const browserCapabilities = capabilitiesDB[browser.getName()] || [];
 
-            capabilitiesByVersion = browserCapabilities.find(({ version }) =>
-                !version || !browser.isVersionGreaterThan(version));
+            for (let i = 0; i < browserCapabilities.length; i++) {
+                const capabilities = browserCapabilities[i];
+
+                if (typeof capabilities !== 'object') {
+                    // eslint-disable-next-line no-continue
+                    continue;
+                }
+
+                const version = capabilities.version;
+
+                if (!version || !this.isVersionGreaterThan(version)) {
+                    capabilitiesByVersion = capabilities;
+                    break;
+                }
+            }
         }
 
         if (!capabilitiesByVersion || !capabilitiesByVersion.capabilities) {
