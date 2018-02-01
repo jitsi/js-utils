@@ -1,0 +1,38 @@
+{
+  "name": "js-utils",
+  "version": "0.0.0",
+  "description": "Utilities for Jitsi JS projects",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jitsi/js-utils"
+  },
+  "keywords": [
+    "browser",
+    "jitsi",
+    "utils"
+  ],
+  "author": "",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "bowser": "1.9.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "8.0.3",
+    "eslint": "4.12.1",
+    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#v0.1",
+    "eslint-plugin-flowtype": "2.39.1",
+    "eslint-plugin-import": "2.8.0",
+    "flow-bin": "0.57.3",
+    "precommit-hook": "3.0.0"
+  },
+  "scripts": {
+    "lint": "eslint . && flow",
+    "validate": "npm ls"
+  },
+  "pre-commit": [
+    "lint",
+    "test"
+  ],
+  "main": "./index.js",
+  "license": "Apache-2.0"
+}
