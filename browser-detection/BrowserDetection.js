@@ -258,7 +258,8 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {string} version - The version to compare with.
+     * @param {*} version - The version to compare with. Anything different
+     * than string will be converted to string.
      * @returns {number|undefined} - Returns 0 if the version is equal to the
      * current one, 1 if the version is greater than the current one, -1 if the
      * version is lower than the current one and undefined if the current
@@ -266,14 +267,15 @@ export default class BrowserDetection {
      */
     compareVersion(version) {
         if (this._version) {
-            return bowser.compareVersions([ version, this._version ]);
+            return bowser.compareVersions([ String(version), this._version ]);
         }
     }
 
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {string} version - The version to compare with.
+     * @param {*} version - The version to compare with. Anything different
+     * than string will be converted to string.
      * @returns {boolean|undefined} - Returns true if the current version is
      * greater than the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
@@ -285,7 +287,8 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {string} version - The version to compare with.
+     * @param {*} version - The version to compare with. Anything different
+     * than string will be converted to string.
      * @returns {boolean|undefined} - Returns true if the current version is
      * lower than the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
@@ -297,7 +300,8 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {string} version - The version to compare with.
+     * @param {*} version - The version to compare with. Anything different
+     * than string will be converted to string.
      * @returns {boolean|undefined} - Returns true if the current version is
      * equal to the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
