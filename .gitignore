@@ -4,6 +4,8 @@
 .sync-config.cson
 .DS_Store
 .idea
+.jshintignore
+.jshintrc
 *.iml
 node_modules/
 npm-debug.log
