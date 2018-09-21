@@ -28,9 +28,32 @@ const bowserNameToJitsiName = {
 };
 
 /**
+ * Detects a Chromium based environent.
+ * 
+ * NOTE: Here we cannot check solely for "Chrome" in the UA string and the
+ * "window.chrome" property, because Edge has both, so we add an explicit
+ * check for NOT Edge.
+ *
+ * @returns {Object|undefined} - The name (CHROME) and version.
+ */
+function _detectChromiumBased() {
+    const userAgent = navigator.userAgent;
+
+    if (Boolean(window.chrome)
+            && !userAgent.match(/Edge/) && userAgent.match(/Chrome/)) {
+        const version = userAgent.match(/Chrome\/([\d.]+)/)[1];
+
+        return {
+            name: CHROME,
+            version
+        };
+    }
+}
+
+/**
  * Detects Electron environment.
  *
- * @returns {Object} - The name (ELECTRON) and version.
+ * @returns {Object|undefined} - The name (ELECTRON) and version.
  */
 function _detectElectron() {
     const userAgent = navigator.userAgent;
@@ -48,7 +71,7 @@ function _detectElectron() {
 /**
  * Detects NWJS environment.
  *
- * @returns {Object} - The name (NWJS) and version.
+ * @returns {Object|undefined} - The name (NWJS) and version.
  */
 function _detectNWJS() {
     const userAgent = navigator.userAgent;
@@ -65,7 +88,7 @@ function _detectNWJS() {
 
 /**
  * Detects React Native environment.
- * @returns {Object} - The name (REACT_NATIVE) and version
+ * @returns {Object|undefined} - The name (REACT_NATIVE) and version.
  */
 function _detectReactNative() {
     const match
@@ -117,11 +140,16 @@ function _detect() {
     const { name, version } = bowser;
 
     if (name in bowserNameToJitsiName) {
-
         return {
             name: bowserNameToJitsiName[name],
             version
         };
+    }
+
+    // Detect other browsers with the Chrome engine, such as Vivaldi.
+    browserInfo = _detectChromiumBased();
+    if (browserInfo) {
+        return browserInfo;
     }
 
     return {
