@@ -29,7 +29,7 @@ const bowserNameToJitsiName = {
 
 /**
  * Detects a Chromium based environent.
- * 
+ *
  * NOTE: Here we cannot check solely for "Chrome" in the UA string and the
  * "window.chrome" property, because Edge has both, so we add an explicit
  * check for NOT Edge.
