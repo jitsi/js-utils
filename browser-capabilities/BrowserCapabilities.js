@@ -19,6 +19,7 @@ export default class BrowserCapabilities {
      */
     constructor(capabilitiesDB = {}, isUsingIFrame = false, browserInfo) {
         const browser = new BrowserDetection(browserInfo);
+
         let capabilitiesByVersion;
 
         // If the capabilitiesDB is not in the correct format or the type of the

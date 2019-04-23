@@ -93,6 +93,7 @@ function _detectNWJS() {
 function _detectReactNative() {
     const match
         = navigator.userAgent.match(/\b(react[ \t_-]*native)(?:\/(\S+))?/i);
+
     let version;
 
     // If we're remote debugging a React Native app, it may be treated as
