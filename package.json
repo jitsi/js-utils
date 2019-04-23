@@ -14,7 +14,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
-    "bowser": "1.9.1",
+    "bowser": "2.3.0",
     "js-md5": "0.7.3"
   },
   "devDependencies": {

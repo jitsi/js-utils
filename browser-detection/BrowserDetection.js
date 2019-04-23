@@ -1,4 +1,4 @@
-import bowser from 'bowser';
+import Bowser from 'bowser';
 
 import {
     CHROME,
@@ -26,6 +26,8 @@ const bowserNameToJitsiName = {
     'Microsoft Edge': EDGE,
     'Safari': SAFARI
 };
+
+const bowser = Bowser.getParser(window.navigator.userAgent);
 
 /**
  * Detects a Chromium based environent.
@@ -138,7 +140,8 @@ function _detect() {
         }
     }
 
-    const { name, version } = bowser;
+    const name = bowser.getBrowserName();
+    const version = bowser.getBrowserVersion();
 
     if (name in bowserNameToJitsiName) {
         return {
@@ -280,28 +283,6 @@ export default class BrowserDetection {
 
     /**
      * Compares the passed version with the current browser version.
-     * {@see https://github.com/lancedikson/bowser}
-     */
-    static compareVersions = bowser.compareVersions;
-
-    /**
-     * Compares the passed version with the current browser version.
-     *
-     * @param {*} version - The version to compare with. Anything different
-     * than string will be converted to string.
-     * @returns {number|undefined} - Returns 0 if the version is equal to the
-     * current one, 1 if the version is greater than the current one, -1 if the
-     * version is lower than the current one and undefined if the current
-     * browser version is unknown.
-     */
-    compareVersion(version) {
-        if (this._version) {
-            return bowser.compareVersions([ String(version), this._version ]);
-        }
-    }
-
-    /**
-     * Compares the passed version with the current browser version.
      *
      * @param {*} version - The version to compare with. Anything different
      * than string will be converted to string.
@@ -310,7 +291,13 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionGreaterThan(version) {
-        return this.compareVersion(version) === -1;
+        if (this._version) {
+            const check = {};
+
+            check[this._name] = `>${version}`;
+
+            return bowser.satisfies(check);
+        }
     }
 
     /**
@@ -323,11 +310,20 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionLessThan(version) {
-        return this.compareVersion(version) === 1;
+        if (this._version) {
+            const check = {};
+
+            check[this._name] = `<${version}`;
+
+            return bowser.satisfies(check);
+        }
     }
 
     /**
      * Compares the passed version with the current browser version.
+     * The version to compare can be '20' or '20.1', and the compared version
+     * will be up to the passed version, both 20.1.19 and 20.1.20 will be
+     * satisfied.
      *
      * @param {*} version - The version to compare with. Anything different
      * than string will be converted to string.
@@ -336,6 +332,12 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionEqualTo(version) {
-        return this.compareVersion(version) === 0;
+        if (this._version) {
+            const check = {};
+
+            check[this._name] = `~${version}`;
+
+            return bowser.satisfies(check);
+        }
     }
 }
