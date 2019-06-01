@@ -1,9 +1,4 @@
 /**
- * The app linking scheme.
- */
-const DEFAULT_APP_LINK_SCHEME = 'org.jitsi.meet:';
-
-/**
  * A list of characters to be excluded/removed from the room component/segment
  * of a conference/meeting URI/URL. The list is based on RFC 3986 and the jxmpp
  * library utilized by jicofo.
@@ -337,11 +332,10 @@ function _standardURIToString(thiz) {
  *
  * @param {Object|string} obj - The URL to return a {@code String}
  * representation of.
- * @param {string} - The app linking scheme.
  * @returns {string} - A {@code String} representation of the specified
  * {@code obj} which is supposed to represent a URL.
  */
-export function toURLString(obj, appLinkScheme) {
+export function toURLString(obj) {
     let str;
 
     switch (typeof obj) {
@@ -350,7 +344,7 @@ export function toURLString(obj, appLinkScheme) {
             if (obj instanceof URL) {
                 str = obj.href;
             } else {
-                str = urlObjectToString(obj, appLinkScheme);
+                str = urlObjectToString(obj);
             }
         }
         break;
@@ -369,11 +363,10 @@ export function toURLString(obj, appLinkScheme) {
  * of Web's ExternalAPI.
  *
  * @param {Object} o - The URL to return a {@code String} representation of.
- * @param {string} - The app linking scheme.
  * @returns {string} - A {@code String} representation of the specified
  * {@code Object}.
  */
-export function urlObjectToString(o, appLinkScheme = DEFAULT_APP_LINK_SCHEME) {
+export function urlObjectToString(o) {
     // First normalize the given url. It come as o.url or split into o.serverURL
     // and o.room.
     let tmp;
@@ -410,14 +403,14 @@ export function urlObjectToString(o, appLinkScheme = DEFAULT_APP_LINK_SCHEME) {
         // tenant.
         const domain = o.domain || o.host || o.hostname;
 
-        if (domain) {
+        if (domain && o.appLinkScheme) {
             const { host, hostname, pathname: contextRoot, port }
                 = parseStandardURIString(
 
                     // XXX The value of domain in supposed to be host/hostname
                     // and, optionally, pathname. Make sure it is not taken for
                     // a pathname only.
-                    _fixURIStringScheme(`${appLinkScheme}//${domain}`));
+                    _fixURIStringScheme(`${o.appLinkScheme}//${domain}`));
 
             // authority
             if (host) {
