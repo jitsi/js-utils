@@ -45,9 +45,9 @@ function generateAvatarURL(key: string, urlPrefix: string, urlSuffix: string) {
  * @param {string} email - Email id for which we need gravatar url.
  * @returns {string} - Gravatar URL.
  */
-function getGravatarURL(email: string) {
+export function getGravatarURL(email: string) {
     const urlPrefix = 'https://www.gravatar.com/avatar/';
-    const urlSuffix = '?d=wavatar&size=200';
+    const urlSuffix = '?d=404&size=200';
 
     // If email is valid, return gravatar url.
     if (isValidEmail(email)) {
