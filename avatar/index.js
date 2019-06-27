@@ -42,17 +42,17 @@ function generateAvatarURL(key: string, urlPrefix: string, urlSuffix: string) {
 /**
  * Returns the Gravatar URL of a given email id.
  *
- * @param {string} email - Email id for which we need gravatar url.
+ * @param {string} key - Email or id for which we need gravatar url.
  * @returns {string} - Gravatar URL.
  */
-export function getGravatarURL(email: string) {
+export function getGravatarURL(key: string) {
     const urlPrefix = 'https://www.gravatar.com/avatar/';
     const urlSuffix = '?d=404&size=200';
 
-    // If email is valid, return gravatar url.
-    if (isValidEmail(email)) {
-        return generateAvatarURL(email, urlPrefix, urlSuffix);
-    }
+    // If the key is a valid email, we hash it. If it's not, we assume it's already a hashed format
+    const avatarKey = isValidEmail(key) ? md5.hex(key.trim().toLowerCase()) : key;
+
+    return `${urlPrefix}${avatarKey}${urlSuffix}`
 }
 
 /**
