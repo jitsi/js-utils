@@ -29,7 +29,7 @@ const bowserNameToJitsiName = {
 
 /**
  * Detects a Chromium based environent.
- *
+ * 
  * NOTE: Here we cannot check solely for "Chrome" in the UA string and the
  * "window.chrome" property, because Edge has both, so we add an explicit
  * check for NOT Edge.
@@ -91,28 +91,28 @@ function _detectNWJS() {
  * @returns {Object|undefined} - The name (REACT_NATIVE) and version.
  */
 function _detectReactNative() {
-    const match
-        = navigator.userAgent.match(/\b(react[ \t_-]*native)(?:\/(\S+))?/i);
-    let version;
-
+    let match = null;
+    if (typeof navigator.userAgent === 'string') {
+        match
+            = navigator.userAgent.match(/\b(react[ \t_-]*native)(?:\/(\S+))?/i);
+    }
     // If we're remote debugging a React Native app, it may be treated as
     // Chrome. Check navigator.product as well and always return some version
     // even if we can't get the real one.
 
-    if (match || navigator.product === 'ReactNative') {
-        let name;
-
+    // if (match || navigator.product === 'ReactNative') {
+    if (navigator.product === 'ReactNative') {
         if (match && match.length > 2) {
-            name = match[1];
-            version = match[2];
+            return {
+                name: match[1],
+                version: match[2]
+            }
         }
-        name || (name = 'react-native');
-        version || (version = 'unknown');
 
         return {
             name: REACT_NATIVE,
-            version
-        };
+            version: 'unknown'
+        }
     }
 }
 
