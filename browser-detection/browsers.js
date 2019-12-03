@@ -21,3 +21,5 @@ export const ELECTRON = 'electron';
 export const REACT_NATIVE = 'react-native';
 
 export const UNKNOWN = 'unknown';
+
+export const WEBVIEW = 'webview';

@@ -10,7 +10,8 @@ import {
     NWJS,
     ELECTRON,
     REACT_NATIVE,
-    UNKNOWN
+    UNKNOWN,
+    WEBVIEW
 } from './browsers';
 
 /**
@@ -117,6 +118,24 @@ function _detectReactNative() {
 }
 
 /**
+ * Detects WebView environment.
+ * @returns {Object|undefined} - The name (WEBVIEW) and version.
+ */
+function _detectWebView() {
+    const userAgent = navigator.userAgent;
+    const isWebView = Boolean(userAgent.match(/\bwv\b/i));
+
+    if (isWebView) {
+        const version = userAgent.match(/Chrome\/([\d.]+)/)[1];
+
+        return {
+            name: WEBVIEW,
+            version
+        };
+    }
+}
+
+/**
  * Returns information about the current browser.
  *
  * @returns {Object} - The name and version of the browser.
@@ -126,7 +145,8 @@ function _detect() {
     const detectors = [
         _detectReactNative,
         _detectElectron,
-        _detectNWJS
+        _detectNWJS,
+        _detectWebView
     ];
 
     // Try all browser detectors
