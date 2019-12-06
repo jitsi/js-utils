@@ -15,7 +15,8 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "bowser": "1.9.1",
-    "js-md5": "0.7.3"
+    "js-md5": "0.7.3",
+    "postis": "2.2.0"
   },
   "devDependencies": {
     "babel-eslint": "8.0.3",
