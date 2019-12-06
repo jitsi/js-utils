@@ -52,7 +52,7 @@ export function getGravatarURL(key: string) {
     // If the key is a valid email, we hash it. If it's not, we assume it's already a hashed format
     const avatarKey = isValidEmail(key) ? md5.hex(key.trim().toLowerCase()) : key;
 
-    return `${urlPrefix}${avatarKey}${urlSuffix}`
+    return `${urlPrefix}${avatarKey}${urlSuffix}`;
 }
 
 /**
