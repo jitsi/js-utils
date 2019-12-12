@@ -1,4 +1,4 @@
-import bowser from 'bowser';
+import Bowser from 'bowser';
 
 import {
     CHROME,
@@ -121,7 +121,7 @@ function _detectReactNative() {
  *
  * @returns {Object} - The name and version of the browser.
  */
-function _detect() {
+function _detectCustomAgents() {
     let browserInfo;
     const detectors = [
         _detectReactNative,
@@ -136,26 +136,6 @@ function _detect() {
             return browserInfo;
         }
     }
-
-    const { name, version } = bowser;
-
-    if (name in bowserNameToJitsiName) {
-        return {
-            name: bowserNameToJitsiName[name],
-            version
-        };
-    }
-
-    // Detect other browsers with the Chrome engine, such as Vivaldi.
-    browserInfo = _detectChromiumBased();
-    if (browserInfo) {
-        return browserInfo;
-    }
-
-    return {
-        name: UNKNOWN,
-        version: undefined
-    };
 }
 
 /**
@@ -170,23 +150,43 @@ export default class BrowserDetection {
      * @param {string} browserInfo.version - The version of the browser.
      */
     constructor(browserInfo) {
-        let name, version;
+        let browser, browserName, browserVersion;
 
         if (typeof browserInfo === 'undefined') {
-            const detectedBrowserInfo = _detect();
+            const detectedBrowserInfo = _detectCustomAgents();
 
-            name = detectedBrowserInfo.name;
-            version = detectedBrowserInfo.version;
+            if (detectedBrowserInfo) {
+                browserName = detectedBrowserInfo.name;
+                browserVersion = detectedBrowserInfo.version;
+            } else {
+                // check if it is one of the known browsers using Bowser.
+                browser = Bowser.getParser(navigator.userAgent);
+                if (browser.getBrowserName() in bowserNameToJitsiName) {
+                    browserName = browser.getBrowserName();
+                    browserVersion = browser.getBrowserVersion();
+                } else {
+                    // check if it is Chromium based.
+                    const { name, version } = _detectChromiumBased();
+
+                    if (name) {
+                        browserName = name;
+                        browserVersion = version;
+                    } else {
+                        browserName = UNKNOWN;
+                        browserVersion = undefined;
+                    }
+                }
+            }
         } else if (browserInfo.name in bowserNameToJitsiName) {
-            name = bowserNameToJitsiName[browserInfo.name];
-            version = browserInfo.version;
+            browserName = bowserNameToJitsiName[browserInfo.name];
+            browserVersion = browserInfo.version;
         } else {
-            name = UNKNOWN;
-            version = undefined;
+            browserName = UNKNOWN;
+            browserVersion = undefined;
         }
-
-        this._name = name;
-        this._version = version;
+        this._browser = browser;
+        this._name = browserName.toLowerCase();
+        this._version = browserVersion;
     }
 
     /**
@@ -279,28 +279,6 @@ export default class BrowserDetection {
 
     /**
      * Compares the passed version with the current browser version.
-     * {@see https://github.com/lancedikson/bowser}
-     */
-    static compareVersions = bowser.compareVersions;
-
-    /**
-     * Compares the passed version with the current browser version.
-     *
-     * @param {*} version - The version to compare with. Anything different
-     * than string will be converted to string.
-     * @returns {number|undefined} - Returns 0 if the version is equal to the
-     * current one, 1 if the version is greater than the current one, -1 if the
-     * version is lower than the current one and undefined if the current
-     * browser version is unknown.
-     */
-    compareVersion(version) {
-        if (this._version) {
-            return bowser.compareVersions([ String(version), this._version ]);
-        }
-    }
-
-    /**
-     * Compares the passed version with the current browser version.
      *
      * @param {*} version - The version to compare with. Anything different
      * than string will be converted to string.
@@ -309,7 +287,9 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionGreaterThan(version) {
-        return this.compareVersion(version) === -1;
+        if (this._browser) {
+            return this._browser.satisfies({ [this._name]: `>${version}` });
+        }
     }
 
     /**
@@ -322,7 +302,9 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionLessThan(version) {
-        return this.compareVersion(version) === 1;
+        if (this._browser) {
+            return this._browser.satisfies({ [this._name]: `<${version}` });
+        }
     }
 
     /**
@@ -333,8 +315,11 @@ export default class BrowserDetection {
      * @returns {boolean|undefined} - Returns true if the current version is
      * equal to the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
+     * A loose-equality operator is used here so that it matches the sub-versions as well.
      */
     isVersionEqualTo(version) {
-        return this.compareVersion(version) === 0;
+        if (this._browser) {
+            return this._browser.satisfies({ [this._name]: `~${version}` });
+        }
     }
 }
