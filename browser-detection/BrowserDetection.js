@@ -186,7 +186,7 @@ export default class BrowserDetection {
             version = undefined;
         }
 
-        this._name = name.toLowerCase();
+        this._name = name;
         this._version = version;
     }
 
