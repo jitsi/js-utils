@@ -118,10 +118,10 @@ function _detectReactNative() {
 
 /**
  * Returns information about the current browser.
- *
+ * @param {Object} - The bowser instance.
  * @returns {Object} - The name and version of the browser.
  */
-function _detectCustomAgents() {
+function _detect(bowser) {
     let browserInfo;
     const detectors = [
         _detectReactNative,
@@ -136,6 +136,26 @@ function _detectCustomAgents() {
             return browserInfo;
         }
     }
+
+    const name = bowser.getBrowserName();
+
+    if (name in bowserNameToJitsiName) {
+        return {
+            name: bowserNameToJitsiName[name],
+            version: bowser.getBrowserVersion()
+        };
+    }
+
+    // Detect other browsers with the Chrome engine, such as Vivaldi and Brave.
+    browserInfo = _detectChromiumBased();
+    if (browserInfo) {
+        return browserInfo;
+    }
+
+    return {
+        name: UNKNOWN,
+        version: undefined
+    };
 }
 
 /**
@@ -150,43 +170,24 @@ export default class BrowserDetection {
      * @param {string} browserInfo.version - The version of the browser.
      */
     constructor(browserInfo) {
-        let browser, browserName, browserVersion;
+        let name, version;
 
+        this._bowser = Bowser.getParser(navigator.userAgent);
         if (typeof browserInfo === 'undefined') {
-            const detectedBrowserInfo = _detectCustomAgents();
+            const detectedBrowserInfo = _detect(this._bowser);
 
-            if (detectedBrowserInfo) {
-                browserName = detectedBrowserInfo.name;
-                browserVersion = detectedBrowserInfo.version;
-            } else {
-                // check if it is one of the known browsers using Bowser.
-                browser = Bowser.getParser(navigator.userAgent);
-                if (browser.getBrowserName() in bowserNameToJitsiName) {
-                    browserName = browser.getBrowserName();
-                    browserVersion = browser.getBrowserVersion();
-                } else {
-                    // check if it is Chromium based.
-                    const { name, version } = _detectChromiumBased();
-
-                    if (name) {
-                        browserName = name;
-                        browserVersion = version;
-                    } else {
-                        browserName = UNKNOWN;
-                        browserVersion = undefined;
-                    }
-                }
-            }
+            name = detectedBrowserInfo.name;
+            version = detectedBrowserInfo.version;
         } else if (browserInfo.name in bowserNameToJitsiName) {
-            browserName = bowserNameToJitsiName[browserInfo.name];
-            browserVersion = browserInfo.version;
+            name = bowserNameToJitsiName[browserInfo.name];
+            version = browserInfo.version;
         } else {
-            browserName = UNKNOWN;
-            browserVersion = undefined;
+            name = UNKNOWN;
+            version = undefined;
         }
-        this._browser = browser;
-        this._name = browserName.toLowerCase();
-        this._version = browserVersion;
+
+        this._name = name.toLowerCase();
+        this._version = version;
     }
 
     /**
@@ -287,8 +288,8 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionGreaterThan(version) {
-        if (this._browser) {
-            return this._browser.satisfies({ [this._name]: `>${version}` });
+        if (this._version) {
+            return this._bowser.satisfies({ [this._name]: `>${version}` });
         }
     }
 
@@ -302,8 +303,8 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionLessThan(version) {
-        if (this._browser) {
-            return this._browser.satisfies({ [this._name]: `<${version}` });
+        if (this._version) {
+            return this._bowser.satisfies({ [this._name]: `<${version}` });
         }
     }
 
@@ -318,8 +319,8 @@ export default class BrowserDetection {
      * A loose-equality operator is used here so that it matches the sub-versions as well.
      */
     isVersionEqualTo(version) {
-        if (this._browser) {
-            return this._browser.satisfies({ [this._name]: `~${version}` });
+        if (this._version) {
+            return this._bowser.satisfies({ [this._name]: `~${version}` });
         }
     }
 }
