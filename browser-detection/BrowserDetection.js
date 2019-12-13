@@ -1,4 +1,4 @@
-import bowser from 'bowser';
+import Bowser from 'bowser';
 
 import {
     CHROME,
@@ -118,10 +118,10 @@ function _detectReactNative() {
 
 /**
  * Returns information about the current browser.
- *
+ * @param {Object} - The bowser instance.
  * @returns {Object} - The name and version of the browser.
  */
-function _detect() {
+function _detect(bowser) {
     let browserInfo;
     const detectors = [
         _detectReactNative,
@@ -137,16 +137,16 @@ function _detect() {
         }
     }
 
-    const { name, version } = bowser;
+    const name = bowser.getBrowserName();
 
     if (name in bowserNameToJitsiName) {
         return {
             name: bowserNameToJitsiName[name],
-            version
+            version: bowser.getBrowserVersion()
         };
     }
 
-    // Detect other browsers with the Chrome engine, such as Vivaldi.
+    // Detect other browsers with the Chrome engine, such as Vivaldi and Brave.
     browserInfo = _detectChromiumBased();
     if (browserInfo) {
         return browserInfo;
@@ -172,8 +172,9 @@ export default class BrowserDetection {
     constructor(browserInfo) {
         let name, version;
 
+        this._bowser = Bowser.getParser(navigator.userAgent);
         if (typeof browserInfo === 'undefined') {
-            const detectedBrowserInfo = _detect();
+            const detectedBrowserInfo = _detect(this._bowser);
 
             name = detectedBrowserInfo.name;
             version = detectedBrowserInfo.version;
@@ -279,28 +280,6 @@ export default class BrowserDetection {
 
     /**
      * Compares the passed version with the current browser version.
-     * {@see https://github.com/lancedikson/bowser}
-     */
-    static compareVersions = bowser.compareVersions;
-
-    /**
-     * Compares the passed version with the current browser version.
-     *
-     * @param {*} version - The version to compare with. Anything different
-     * than string will be converted to string.
-     * @returns {number|undefined} - Returns 0 if the version is equal to the
-     * current one, 1 if the version is greater than the current one, -1 if the
-     * version is lower than the current one and undefined if the current
-     * browser version is unknown.
-     */
-    compareVersion(version) {
-        if (this._version) {
-            return bowser.compareVersions([ String(version), this._version ]);
-        }
-    }
-
-    /**
-     * Compares the passed version with the current browser version.
      *
      * @param {*} version - The version to compare with. Anything different
      * than string will be converted to string.
@@ -309,7 +288,9 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionGreaterThan(version) {
-        return this.compareVersion(version) === -1;
+        if (this._version) {
+            return this._bowser.satisfies({ [this._name]: `>${version}` });
+        }
     }
 
     /**
@@ -322,7 +303,9 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionLessThan(version) {
-        return this.compareVersion(version) === 1;
+        if (this._version) {
+            return this._bowser.satisfies({ [this._name]: `<${version}` });
+        }
     }
 
     /**
@@ -333,8 +316,11 @@ export default class BrowserDetection {
      * @returns {boolean|undefined} - Returns true if the current version is
      * equal to the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
+     * A loose-equality operator is used here so that it matches the sub-versions as well.
      */
     isVersionEqualTo(version) {
-        return this.compareVersion(version) === 0;
+        if (this._version) {
+            return this._bowser.satisfies({ [this._name]: `~${version}` });
+        }
     }
 }
