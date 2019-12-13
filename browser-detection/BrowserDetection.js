@@ -279,6 +279,25 @@ export default class BrowserDetection {
     }
 
     /**
+     * Check if the parsed browser matches the passed condition.
+     *
+     * @param {Object} checkTree - It's one or two layered object, which can include a
+     * platform or an OS on the first layer and should have browsers specs on the
+     * bottom layer.
+     * Eg. { chrome: '>71.1.0' }
+     *     { windows: { chrome: '<70.2' } }
+     * @returns {boolean | undefined} - Returns true if the browser satisfies the set
+     * conditions, false if not and undefined when the browser is not defined in the
+     * checktree object or when the current browser's version is unknown.
+     * @private
+     */
+    _checkCondition(checkTree) {
+        if (this._version) {
+            return this._bowser.satisfies(checkTree);
+        }
+    }
+
+    /**
      * Compares the passed version with the current browser version.
      *
      * @param {*} version - The version to compare with. Anything different
@@ -288,9 +307,7 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionGreaterThan(version) {
-        if (this._version) {
-            return this._bowser.satisfies({ [this._name]: `>${version}` });
-        }
+        return this._checkCondition({ [this._name]: `>${version}` });
     }
 
     /**
@@ -303,9 +320,7 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionLessThan(version) {
-        if (this._version) {
-            return this._bowser.satisfies({ [this._name]: `<${version}` });
-        }
+        return this._checkCondition({ [this._name]: `<${version}` });
     }
 
     /**
@@ -319,8 +334,6 @@ export default class BrowserDetection {
      * A loose-equality operator is used here so that it matches the sub-versions as well.
      */
     isVersionEqualTo(version) {
-        if (this._version) {
-            return this._bowser.satisfies({ [this._name]: `~${version}` });
-        }
+        return this._checkCondition({ [this._name]: `~${version}` });
     }
 }
