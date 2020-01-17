@@ -10,8 +10,6 @@ export const FIREFOX = 'firefox';
 
 export const INTERNET_EXPLORER = 'iexplorer';
 
-export const EDGE = 'edge';
-
 export const SAFARI = 'safari';
 
 export const NWJS = 'nwjs';

@@ -5,7 +5,6 @@ import {
     OPERA,
     FIREFOX,
     INTERNET_EXPLORER,
-    EDGE,
     SAFARI,
     NWJS,
     ELECTRON,
@@ -23,7 +22,6 @@ const bowserNameToJitsiName = {
     'Opera': OPERA,
     'Firefox': FIREFOX,
     'Internet Explorer': INTERNET_EXPLORER,
-    'Microsoft Edge': EDGE,
     'Safari': SAFARI
 };
 
@@ -31,23 +29,33 @@ const bowserNameToJitsiName = {
  * Detects a Chromium based environent.
  *
  * NOTE: Here we cannot check solely for "Chrome" in the UA string and the
- * "window.chrome" property, because Edge has both, so we add an explicit
- * check for NOT Edge.
+ * "window.chrome" property, because Edge has both. We need to check explicitly
+ * for chromium based Edge first and then detect other chromium based browsers.
  *
  * @returns {Object|undefined} - The name (CHROME) and version.
  */
 function _detectChromiumBased() {
     const userAgent = navigator.userAgent;
+    const browserInfo = {
+        name: UNKNOWN,
+        version: undefined
+    };
 
-    if (Boolean(window.chrome)
-            && !userAgent.match(/Edge/) && userAgent.match(/Chrome/)) {
-        const version = userAgent.match(/Chrome\/([\d.]+)/)[1];
+    if (Boolean(window.chrome) && userAgent.match(/Chrome/)) {
+        if (userAgent.match(/Edg/)) {
+            const version = userAgent.match(/Edg\/([\d.]+)/)[1];
 
-        return {
-            name: CHROME,
-            version
-        };
+            if (Number.parseInt(version, 10) > 72) {
+                browserInfo.name = CHROME;
+                browserInfo.version = version;
+            }
+        } else {
+            browserInfo.name = CHROME;
+            browserInfo.version = userAgent.match(/Chrome\/([\d.]+)/)[1];
+        }
     }
+
+    return browserInfo;
 }
 
 /**
@@ -228,14 +236,6 @@ export default class BrowserDetection {
      */
     isIExplorer() {
         return this._name === INTERNET_EXPLORER;
-    }
-
-    /**
-     * Checks if current browser is Microsoft Edge.
-     * @returns {boolean}
-     */
-    isEdge() {
-        return this._name === EDGE;
     }
 
     /**
