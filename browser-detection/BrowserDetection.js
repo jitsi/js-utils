@@ -28,9 +28,9 @@ const bowserNameToJitsiName = {
 /**
  * Detects a Chromium based environent.
  *
- * NOTE: Here we cannot check solely for "Chrome" in the UA string and the
- * "window.chrome" property, because Edge has both. We need to check explicitly
- * for chromium based Edge first and then detect other chromium based browsers.
+ * NOTE: Here we cannot check solely for "Chrome" in the UA, because Edge has
+ * it too. We need to check explicitly for chromium based Edge first and then
+ * detect other chromium based browsers.
  *
  * @returns {Object|undefined} - The name (CHROME) and version.
  */
@@ -41,7 +41,7 @@ function _detectChromiumBased() {
         version: undefined
     };
 
-    if (Boolean(window.chrome) && userAgent.match(/Chrome/)) {
+    if (userAgent.match(/Chrome/)) {
         if (userAgent.match(/Edg/)) {
             const version = userAgent.match(/Edg\/([\d.]+)/)[1];
 
