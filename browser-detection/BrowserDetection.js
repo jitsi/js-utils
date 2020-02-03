@@ -41,7 +41,7 @@ function _detectChromiumBased() {
         version: undefined
     };
 
-    if (userAgent.match(/Chrome/)) {
+    if (userAgent.match(/Chrome/) && !userAgent.match(/Edge/)) {
         if (userAgent.match(/Edg/)) {
             const version = userAgent.match(/Edg\/([\d.]+)/)[1];
 
