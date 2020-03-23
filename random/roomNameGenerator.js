@@ -56,7 +56,7 @@ const _PLURALNOUN_ = [
     "Beneficiaries", "Benefits", "Bests", "Bets", "Betters", "Biases",
     "Bicycles", "Bids", "Bikes", "Bills", "Bins", "Biographies",
     "Biologies", "Birds", "Birthdays", "Births", "Biscuits", "Bishops",
-    "Bites", "Bits", "Blacks", "Blades", "Blames", "Blankets", "Blanks",
+    "Bites", "Bits", "Blades", "Blames", "Blankets", "Blanks",
     "Blasts", "Blends", "Blessings", "Blocks", "Blogs", "Bloods", "Blows",
     "Blues", "Boards", "Boats", "Bodies", "Bombings", "Bombs", "Bonds",
     "Bones", "Bonus", "Bookings", "Books", "Booms", "Boosts", "Boots",
