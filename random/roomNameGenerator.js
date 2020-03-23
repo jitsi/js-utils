@@ -46,7 +46,7 @@ const _PLURALNOUN_ = [
     "Backgrounds", "Backings", "Backs", "Backups", "Bacterias", "Badges",
     "Bags", "Bails", "Balances", "Ballets", "Balloons", "Ballots", "Balls",
     "Bananas", "Bands", "Banks", "Banners", "Bans", "Bargains", "Barrels",
-    "Barriers", "Bars", "Baseballs", "Basements", "Bases", "Bases",
+    "Barriers", "Bars", "Baseballs", "Basements", "Bases",
     "Basketballs", "Baskets", "Basses", "Bathrooms", "Baths", "Bats",
     "Batteries", "Battlefields", "Battles", "Bays", "Beaches", "Beams",
     "Beans", "Bears", "Beasts", "Beats", "Beauties", "Bedrooms", "Beds",
@@ -135,7 +135,7 @@ const _PLURALNOUN_ = [
     "Curricula", "Curtains", "Custodies", "Customers", "Customs",
     "Cuts", "Cuttings", "Cycles", "Dads", "Dairies", "Damages", "Dams",
     "Dancers", "Dances", "Dancings", "Dangers", "Darknesses", "Darks",
-    "Databases", "Dates", "Dates", "Daughters", "Dawns", "Days",
+    "Databases", "Dates", "Daughters", "Dawns", "Days",
     "Deadlines", "Dealers", "Deals", "Debates", "Debris", "Debts",
     "Debuts", "Decades", "Decembers", "DecisionMakings", "Decisions",
     "Decks", "Declarations", "Declines", "Decorations", "Decreases",
@@ -218,7 +218,7 @@ const _PLURALNOUN_ = [
     "Genius", "Genres", "Gentlemen", "Geographies", "Gestures",
     "Ghosts", "Giants", "Gifts", "Gigs", "Glances", "Glasses", "Glimpses",
     "Globalizations", "Globes", "Glories", "Gloves", "Goals", "Gods",
-    "Goes", "Gold", "Golfs", "Goodbyes", "Goodnesses", "Goods", "Goods",
+    "Goes", "Gold", "Golfs", "Goodbyes", "Goodnesses", "Goods",
     "Governances", "Governments", "Governors", "Graces", "Grades",
     "Graduates", "Grains", "Grandfathers", "Grandmothers", "Grandparents",
     "Grants", "Graphics", "Grasps", "Grasses", "Graves", "Gravities",
@@ -276,7 +276,7 @@ const _PLURALNOUN_ = [
     "Languages", "Laps", "Laptops", "Lasers", "Lasts", "Latests", "Laughs",
     "Laughters", "Launches", "Lawns", "Laws", "Lawsuits", "Lawyers",
     "Layers", "Layouts", "Leaders", "Leaderships", "Leads", "Leaflets",
-    "Leagues", "Leaks", "Leaps", "Learnings", "Leathers", "Leaves",
+    "Leagues", "Leaks", "Leaps", "Learnings", "Leathers",
     "Leaves", "Lectures", "Lefts", "Legacies", "Legends", "Legislations",
     "Legislatures", "Legs", "Leisures", "Lemons", "Lengths", "Lens",
     "Lessons", "Letters", "Levels", "Liberals", "Liberations", "Liberties",
@@ -292,13 +292,13 @@ const _PLURALNOUN_ = [
     "Magnitudes", "Mails", "Mainlands", "Mainstreams", "Maintenances",
     "Majorities", "MakeUps", "Makes", "Makings", "Malls",
     "Managements", "Managers", "Mandates", "Manipulations", "Manners",
-    "Manufacturings", "Manuscripts", "Maps", "Marathons", "Marches",
+    "Manufacturings", "Manuscripts", "Maps", "Marathons",
     "Marches", "Margins", "Markers", "Marketings", "Marketplaces",
     "Markets", "Marks", "Marriages", "Masks", "Masses",
     "Masters", "Matches", "Materials", "Mates", "Mathematics", "Maths",
     "Matters", "Maximums", "Mayors", "Mays", "Meals", "Meanings", "Means",
     "Meantimes", "Measurements", "Measures", "Meats", "Mechanics",
-    "Mechanisms", "Medals", "Media", "Media", "Medications", "Medicines",
+    "Mechanisms", "Medals", "Media", "Medications", "Medicines",
     "Meditations", "Meetings", "Melodies", "Members", "Memberships",
     "Memoirs", "Memorials", "Memories", "Memos", "Mentions",
     "Mentors", "Menus", "Merchants", "Mercies", "Mergers", "Merits",
@@ -480,7 +480,7 @@ const _PLURALNOUN_ = [
     "Techniques", "Technologies", "Teenagers", "Teens", "Teeth",
     "Telephones", "Televisions", "Temperatures", "Temples", "Tenants",
     "Tendencies", "Tennis", "Tensions", "Tents", "Tenures", "Terminals",
-    "Terms", "Terms", "Terrains", "Territories", 
+    "Terms", "Terrains", "Territories",
     "Testimonies", "Testings", "Tests", "Textbooks", "Texts",
     "Textures", "Thanks", "Theatres", "Thefts", "Themes", "Theologies",
     "Theories", "Therapies", "Therapists", "Theses", "Thieves", "Things",
@@ -1106,3 +1106,28 @@ function _hasTemplate(s) {
 
     return false;
 }
+
+/*
+function findDuplicates(array) {
+    var dups = array.reduce(function (acc, cur) {
+        if (!acc[cur]) {
+            acc[cur] = 1;
+        } else {
+            acc[cur] += 1;
+        }
+
+        return acc;
+    }, {});
+    for (const word in dups) {
+        if (dups[word] > 1) {
+            console.log(`Duplicate: ${word} ${dups[word]}`);
+        }
+    }
+}
+findDuplicates(_ADJECTIVE_);
+findDuplicates(_PLURALNOUN_);
+findDuplicates(_VERB_);
+findDuplicates(_ADVERB_);
+var combinations = _ADJECTIVE_.length * _PLURALNOUN_.length * _VERB_.length * _ADVERB_.length;
+console.log(`${combinations} combinations (${Math.log2(combinations)} bits of entropy)`)
+*/
