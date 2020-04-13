@@ -42,8 +42,10 @@ function _detectChromiumBased() {
     };
 
     if (userAgent.match(/Chrome/) && !userAgent.match(/Edge/)) {
-        if (userAgent.match(/Edg/)) {
-            const version = userAgent.match(/Edg\/([\d.]+)/)[1];
+        // Edge is currenly supported only on desktop and android.
+        if (userAgent.match(/Edg(A?)/)) {
+            // Compare the underlying chromium version.
+            const version = userAgent.match(/Chrome\/([\d.]+)/)[1];
 
             if (Number.parseInt(version, 10) > 72) {
                 browserInfo.name = CHROME;
