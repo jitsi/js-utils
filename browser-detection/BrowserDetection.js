@@ -69,7 +69,11 @@ function _detectElectron() {
     const userAgent = navigator.userAgent;
 
     if (userAgent.match(/Electron/)) {
-        const version = userAgent.match(/Electron\/([\d.]+)/)[1];
+        let version;
+        const match = userAgent.match(/Electron[\/ ]([\d.]+)/);
+        if (match) {
+            version = match[1];
+        }
 
         return {
             name: ELECTRON,
