@@ -489,7 +489,7 @@ const _PLURALNOUN_ = [
     'Times', 'Timings', 'Tins', 'Tips', 'Tissues', 'Titles', 'Tobaccos',
     'Todays', 'Toes', 'Toilets', 'Tolerances', 'Tolls', 'Tomatoes',
     'Tomorrows', 'Tones', 'Tongues', 'Tonights', 'Tonnes', 'Tons', 'Tools',
-    'Topics', 'Tops', 'Tortures', 'Totals', 'Touches', 'Tourisms',
+    'Topics', 'Tops', 'Tortoises', 'Totals', 'Touches', 'Tourisms',
     'Tourists', 'Tournaments', 'Tours', 'Towels', 'Towers', 'Towns', 'Toys',
     'Traces', 'Tracks', 'Trademarks', 'Trades', 'Tradings', 'Traditions',
     'Traffics', 'Tragedies', 'Trailers', 'Trails', 'Trainers', 'Trainings',
