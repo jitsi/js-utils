@@ -16,9 +16,7 @@ export function getAvatarURL({ avatarID, email, id }: {
         avatarID: string,
         email: string,
         id: string
-}, { urlPrefix, urlSuffix }: {
-        urlPrefix: string,
-        urlSuffix: string
+        }, { urlPrefix, urlSuffix }: { urlPrefix: string, urlSuffix: string
 } = {
     urlPrefix: 'https://abotars.jitsi.net/meeple/',
     urlSuffix: ''
