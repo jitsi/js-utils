@@ -23,12 +23,10 @@
     "eslint": "4.18.2",
     "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#1.0.2",
     "eslint-plugin-flowtype": "2.39.1",
-    "eslint-plugin-import": "2.8.0",
-    "precommit-hook": "3.0.0"
+    "eslint-plugin-import": "2.8.0"
   },
   "scripts": {
-    "lint": "eslint .",
-    "validate": "npm ls"
+    "lint": "eslint ."
   },
   "pre-commit": [
     "lint",
