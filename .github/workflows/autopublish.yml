@@ -1,0 +1,20 @@
+name: "AutoPublish"
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  auto-publish:
+    name: "AutoPublish on master"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v2"
+      - name: "Automated Release"
+        uses: "jitsi/gh-action-autopublish@master"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
