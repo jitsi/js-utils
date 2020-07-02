@@ -1,5 +1,5 @@
 {
-  "name": "js-utils",
+  "name": "@jitsi/js-utils",
   "version": "1.0.0",
   "description": "Utilities for Jitsi JS projects",
   "repository": {
