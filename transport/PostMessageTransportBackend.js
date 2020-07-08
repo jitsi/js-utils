@@ -1,3 +1,4 @@
+import Bourne from '@hapi/bourne';
 import Postis from 'postis';
 
 /**
@@ -40,7 +41,15 @@ export default class PostMessageTransportBackend {
 
         this.postis.listen(
             POSTIS_METHOD_NAME,
-            message => this._receiveCallback(message));
+            message => {
+                try {
+                    Bourne.scan(message);
+                } catch (ignore) {
+                    return;
+                }
+
+                this._receiveCallback(message);
+            });
     }
 
     /**
