@@ -1,48 +1,142 @@
+import EventEmitter from 'events';
+
 /**
- * Dummy implementation of Storage interface with empty methods.
+ * Dummy implementation of Storage interface.
  */
-class DummyLocalStorage {
-    /* eslint-disable no-empty-function */
-    /**
-     * Empty function
-     */
-    getItem() { }
+class DummyLocalStorage extends EventEmitter {
 
     /**
-     * Empty function
+     * The object used for storage.
      */
-    setItem() { }
+    _storage = {};
 
     /**
-     * Empty function
+     * Empties all keys out of the storage.
+     *
+     * @returns {void}
      */
-    removeItem() { }
+    clear() {
+        this._storage = {};
+    }
 
     /**
-     * Empty function
+     * Returns the number of data items stored in the Storage object.
+     *
+     * @returns {number} - The number of data items stored in the Storage object.
      */
-    key() { }
-    /* eslint-enable no-empty-function */
+    get length() {
+        return Object.keys(this._storage).length;
+    }
+
+    /**
+     * Will return that key's value associated to the passed key name.
+     *
+     * @param {string} keyName - The key name.
+     * @returns {*} - The key value.
+     */
+    getItem(keyName) {
+        return this._storage[keyName];
+    }
+
+    /**
+     * When passed a key name and value, will add that key to the storage,
+     * or update that key's value if it already exists.
+     *
+     * @param {string} keyName - The key name.
+     * @param {*} keyValue - The key value.
+     * @returns {void}
+     */
+    setItem(keyName, keyValue) {
+        this._storage[keyName] = keyValue;
+    }
+
+    /**
+     * When passed a key name, will remove that key from the storage.
+     *
+     * @param {string} keyName - The key name.
+     * @returns {void}
+     */
+    removeItem(keyName) {
+        delete this._storage[keyName];
+    }
+
+    /**
+     * When passed a number n, this method will return the name of the nth key in the storage.
+     *
+     * @param {number} idx - The index of the key.
+     * @returns {string} - The nth key name.
+     */
+    key(n) {
+        const keys = Object.keys(this._storage);
+
+        if (keys.length <= n) {
+            return undefined;
+        }
+
+        return keys[n];
+    }
+
+    /**
+     * Serializes the content of the storage.
+     *
+     * @returns {string} - The serialized content.
+     */
+    serialize() {
+        return JSON.stringify(this._storage);
+    }
 }
 
 /**
  * Wrapper class for browser's local storage object.
  */
-class JitsiLocalStorage extends DummyLocalStorage {
+class JitsiLocalStorage extends EventEmitter {
     /**
      * @constructor
      * @param {Storage} storage browser's local storage object.
      */
     constructor() {
         super();
-        let storage;
 
         try {
-            storage = window.localStorage;
-        } catch (error) {
-            // do nothing
+            this._storage = window.localStorage;
+            this._localStorageDisabled = false;
+        } catch (ignore) {
+            // localStorage throws an exception.
         }
-        this.storage = storage || new DummyLocalStorage();
+
+        if (!this._storage) { // Handles the case when window.localStorage is undefined or throws an exception.
+            console.warn('Local storage is disabled.');
+            this._storage = new DummyLocalStorage();
+            this._localStorageDisabled = true;
+        }
+    }
+
+    /**
+     * Returns true if window.localStorage is disabled and false otherwise.
+     *
+     * @returns {boolean} - True if window.localStorage is disabled and false otherwise.
+     */
+    isLocalStorageDisabled() {
+        return this._localStorageDisabled;
+    }
+
+    /**
+     * Empties all keys out of the storage.
+     *
+     * @returns {void}
+     */
+    clear() {
+        this._storage.clear();
+        this.emit('changed');
+    }
+
+    /**
+     * Returns the number of data items stored in the Storage object.
+     *
+     * @returns {number} - The number of data items stored in the Storage object.
+     */
+    get length() {
+        return this._storage.length;
     }
 
     /**
@@ -53,17 +147,22 @@ class JitsiLocalStorage extends DummyLocalStorage {
      * null is returned.
      */
     getItem(keyName) {
-        return this.storage.getItem(keyName);
+        return this._storage.getItem(keyName);
     }
 
     /**
      * Adds a key to the storage, or update key's value if it already exists.
-     * @param {string} keyName the name of the key you want to create/update.
-     * @param {string} keyValue the value you want to give the key you are
+     * @param {string} keyName - the name of the key you want to create/update.
+     * @param {string} keyValue - the value you want to give the key you are
      * creating/updating.
+     * @param {boolean} dontEmitChangedEvent - If true a changed event won't be emitted.
      */
-    setItem(keyName, keyValue) {
-        return this.storage.setItem(keyName, keyValue);
+    setItem(keyName, keyValue, dontEmitChangedEvent = false) {
+        this._storage.setItem(keyName, keyValue);
+
+        if (!dontEmitChangedEvent) {
+            this.emit('changed');
+        }
     }
 
     /**
@@ -71,7 +170,8 @@ class JitsiLocalStorage extends DummyLocalStorage {
      * @param {string} keyName the name of the key you want to remove.
      */
     removeItem(keyName) {
-        return this.storage.removeItem(keyName);
+        this._storage.removeItem(keyName);
+        this.emit('changed');
     }
 
     /**
@@ -82,7 +182,29 @@ class JitsiLocalStorage extends DummyLocalStorage {
      * @returns {string}
      */
     key(i) {
-        return this.storage.key(i);
+        return this._storage.key(i);
+    }
+
+    /**
+     * Serializes the content of the storage.
+     *
+     * @returns {string} - The serialized content.
+     */
+    serialize() {
+        if (this.isLocalStorageDisabled) {
+            return this._storage.serialize();
+        }
+
+        const length = this._storage.length;
+        const localStorageContent = {};
+
+        for (let i = 0; i < length; i++) {
+            const key = this._storage.key(i);
+
+            localStorageContent[key] = this._storage.getItem(key);
+        }
+
+        return JSON.stringify(localStorageContent);
     }
 }
 
