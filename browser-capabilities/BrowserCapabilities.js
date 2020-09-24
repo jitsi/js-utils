@@ -113,7 +113,7 @@ export default class BrowserCapabilities {
     }
 
     /**
-     * Checks whether the browser supports incomming video.
+     * Checks whether the browser supports outgoing video.
      *
      * @returns {boolean}
      */
