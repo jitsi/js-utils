@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-// Ofiginally: https://github.com/adtile/postis
+// Originally: https://github.com/adtile/postis
 //
 // The MIT License
 // 
@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-function Postis(options) {
+export default function Postis(options) {
   var scope = options.scope;
   var targetWindow = options.window;
   var windowForEventListening = options.windowForEventListening || window;
@@ -142,4 +142,3 @@ function Postis(options) {
   return postis;
 }
 
-module.exports = Postis;
