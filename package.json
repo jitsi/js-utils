@@ -2,6 +2,7 @@
   "name": "@jitsi/js-utils",
   "version": "1.0.2",
   "description": "Utilities for Jitsi JS projects",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git://github.com/jitsi/js-utils"
