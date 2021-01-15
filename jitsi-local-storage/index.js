@@ -191,7 +191,7 @@ class JitsiLocalStorage extends EventEmitter {
      * @returns {string} - The serialized content.
      */
     serialize() {
-        if (this.isLocalStorageDisabled) {
+        if (this.isLocalStorageDisabled()) {
             return this._storage.serialize();
         }
 
