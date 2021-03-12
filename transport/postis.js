@@ -48,7 +48,7 @@ function Postis(options) {
         return;
     }
 
-    if (data.postis && data.scope === scope) {
+    if (data && data.postis && data.scope === scope) {
       var listenersForMethod = listeners[data.method];
       if (listenersForMethod) {
         for (var i = 0; i < listenersForMethod.length; i++) {
