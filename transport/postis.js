@@ -3,8 +3,9 @@
 // Ofiginally: https://github.com/adtile/postis
 //
 // The MIT License
-// 
+//
 // Copyright (c) 2015-2015 Adtile Technologies Inc. http://www.adtile.me
+// Copyright (c) 2021 Vowel, Inc. https://vowel.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,18 +38,26 @@ function Postis(options) {
   var readynessCheck;
 
   var listener = function(event) {
-    var data;
-    try {
-      data = JSON.parse(event.data);
-    } catch (e) {
+    // Don't try to deserialize messages not sent by matching positis instance
+    if (!event.data || !event.data.postis || event.data.scope !== scope) {
       return;
     }
 
     if (allowedOrigin && event.origin !== allowedOrigin) {
-        return;
+      return;
     }
 
-    if (data && data.postis && data.scope === scope) {
+    var data;
+    try {
+      data = JSON.parse(event.data.json);
+    } catch (e) {
+      // This should "never" happen given that JSON.serialize succeeded on the sender's side.
+      // Not logging any data here as it may reveal sensitive information.
+      console.error('POSTIS Failed to deserialize event.data.json', e);
+      return;
+    }
+
+    if (data) {
       var listenersForMethod = listeners[data.method];
       if (listenersForMethod) {
         for (var i = 0; i < listenersForMethod.length; i++) {
@@ -84,12 +93,14 @@ function Postis(options) {
       var method = opts.method;
 
       if ((ready || opts.method === readyMethod) && (targetWindow && typeof targetWindow.postMessage === "function")) {
-        targetWindow.postMessage(JSON.stringify({
+        targetWindow.postMessage({
           postis: true,
           scope: scope,
-          method: method,
-          params: opts.params
-        }), "*");
+          json: JSON.stringify({
+            method: method,
+            params: opts.params
+          })
+        }, "*");
       } else {
         sendBuffer.push(opts);
       }
