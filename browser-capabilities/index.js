@@ -1,1 +1,1 @@
-export { default as BrowserCapabilities } from './BrowserCapabilities';
+export { default as BrowserCapabilities } from './BrowserCapabilities.js';

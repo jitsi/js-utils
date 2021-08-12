@@ -1,1 +1,1 @@
-export * from './uri';
+export * from './uri.js';

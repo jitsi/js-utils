@@ -1,4 +1,4 @@
-import Postis from './postis';
+import Postis from './postis.js';
 
 /**
  * The default options for postis.

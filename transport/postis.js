@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-// Ofiginally: https://github.com/adtile/postis
+// Originally: https://github.com/adtile/postis
 //
 // The MIT License
 // 
@@ -142,4 +142,4 @@ function Postis(options) {
   return postis;
 }
 
-module.exports = Postis;
+export default Postis;

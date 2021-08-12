@@ -1,2 +1,2 @@
-export * from './randomUtil';
-export * from './roomNameGenerator';
+export * from './randomUtil.js';
+export * from './roomNameGenerator.js';
