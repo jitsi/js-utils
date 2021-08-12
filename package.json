@@ -19,10 +19,9 @@
   },
   "devDependencies": {
     "babel-eslint": "8.0.3",
-    "eslint": "4.18.2",
-    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#1.0.2",
-    "eslint-plugin-flowtype": "2.39.1",
-    "eslint-plugin-import": "2.8.0"
+    "eslint": "7.13.0",
+    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#2.0.0",
+    "eslint-plugin-import": "2.24.0"
   },
   "scripts": {
     "lint": "eslint ."
@@ -31,6 +30,7 @@
     "lint",
     "test"
   ],
+  "type": "module",
   "main": "./index.js",
   "license": "Apache-2.0"
 }

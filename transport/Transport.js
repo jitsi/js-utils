@@ -2,7 +2,7 @@ import {
     MESSAGE_TYPE_EVENT,
     MESSAGE_TYPE_REQUEST,
     MESSAGE_TYPE_RESPONSE
-} from './constants';
+} from './constants.js';
 
 /**
 * Stores the currnet transport backend that have to be used. Also implements

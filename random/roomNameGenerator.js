@@ -1,4 +1,4 @@
-import { randomElement } from './randomUtil';
+import { randomElement } from './randomUtil.js';
 
 /*
 const _NOUN_ = [

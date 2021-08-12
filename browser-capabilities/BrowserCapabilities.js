@@ -1,4 +1,4 @@
-import { BrowserDetection } from '../browser-detection';
+import BrowserDetection from '../browser-detection/BrowserDetection.js';
 
 // TODO: Move BrowserCapabilities from lib-jitsi-meet here and use the JSON
 // format for them.
