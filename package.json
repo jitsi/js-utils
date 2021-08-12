@@ -31,6 +31,7 @@
     "lint",
     "test"
   ],
+  "type": "module",
   "main": "./index.js",
   "license": "Apache-2.0"
 }
