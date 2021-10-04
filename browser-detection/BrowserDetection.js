@@ -75,6 +75,11 @@ function _detectElectron() {
             name: ELECTRON,
             version
         };
+    } else if (typeof window.JitsiMeetElectron !== 'undefined') {
+        return {
+            name: ELECTRON,
+            version: undefined
+        };
     }
 }
 
