@@ -8,7 +8,9 @@ class DummyLocalStorage extends EventEmitter {
     /**
      * The object used for storage.
      */
-    _storage = {};
+    constructor() {
+        _storage = {};
+    }
 
     /**
      * Empties all keys out of the storage.
