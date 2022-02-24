@@ -18,19 +18,36 @@
     "js-md5": "0.7.3"
   },
   "devDependencies": {
+    "@types/bowser": "^1.1.1",
+    "@types/jasmine": "^3.10.3",
+    "@types/jest": "^27.4.0",
+    "@types/js-md5": "^0.4.3",
     "babel-eslint": "8.0.3",
     "eslint": "7.13.0",
     "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#2.0.0",
-    "eslint-plugin-import": "2.24.0"
+    "eslint-plugin-import": "2.24.0",
+    "jasmine": "^4.0.2",
+    "jasmine-spec-reporter": "^7.0.0",
+    "jasmine-ts": "^0.4.0",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5"
   },
   "scripts": {
-    "lint": "eslint ."
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "test": "jest",
+    "test-watch": "jest --watch",
+    "lint": "eslint .",
+    "create_types": "tsc --emitDeclarationOnly"
   },
   "pre-commit": [
     "lint",
     "test"
   ],
   "type": "module",
-  "main": "./index.js",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "license": "Apache-2.0"
 }

@@ -1,15 +1,16 @@
-import { randomElement } from './randomUtil.js';
+import { randomElement } from './randomUtil';
+
+// cspell: disable
 
 /*
-const _NOUN_ = [
+const _NOUN_: Array<string> = [
 ];
 */
 
 /**
  * The list of plural nouns.
- * @const
  */
-const _PLURALNOUN_ = [
+const _PLURALNOUN_: Array<string> = [
     'Abilities', 'Absences', 'Abundances', 'Academics',
     'Academies', 'Accents', 'Acceptances', 'Accesses', 'Accidents',
     'Accommodations', 'Accomplishments', 'Accordances', 'Accountabilities',
@@ -542,9 +543,8 @@ const _PLACE_ = [
 
 /**
  * The list of verbs.
- * @const
  */
-const _VERB_ = [
+const _VERB_: Array<string> = [
     'Abolish', 'Absorb', 'Accelerate', 'Accept',
     'Access', 'Accommodate', 'Accompany', 'Accomplish', 'Account',
     'Accumulate', 'Accuse', 'Achieve', 'Acknowledge', 'Acquire', 'Act',
@@ -729,9 +729,8 @@ const _VERB_ = [
 
 /**
  * The list of adverbs.
- * @const
  */
-const _ADVERB_ = [
+const _ADVERB_: Array<string> = [
     'About', 'Above', 'Abroad', 'Absently', 'Absolutely', 'Accidentally',
     'Accordingly', 'Accurately', 'Accusingly', 'Across', 'Actually',
     'Additionally', 'Adequately', 'Adorably', 'After', 'Afterwards',
@@ -817,9 +816,8 @@ const _ADVERB_ = [
 
 /**
  * The list of adjectives.
- * @const
  */
-const _ADJECTIVE_ = [
+const _ADJECTIVE_: Array<string> = [
     'Able', 'Absent', 'Absolute', 'Abstract', 'Absurd', 'Academic',
     'Acceptable', 'Accessible', 'Accountable', 'Accurate', 'Acid', 'Active',
     'Actual', 'Acute', 'Additional', 'Adequate', 'Adjacent',
@@ -1003,35 +1001,33 @@ const _ADJECTIVE_ = [
 ];
 
 /*
-const _PRONOUN_ = [
+const _PRONOUN_: Array<string> = [
 ];
 */
 
 /*
-const _CONJUNCTION_ = [
+const _CONJUNCTION_: Array<string> = [
     'And', 'Or', 'For', 'Above', 'Before', 'Against', 'Between'
 ];
 */
 
 /**
  * Maps a string (category name) to the array of words from that category.
- * @const
  */
-const CATEGORIES = {
+const CATEGORIES: { [ key: string ]: Array<string> } = {
     _ADJECTIVE_,
     _ADVERB_,
     _PLURALNOUN_,
     _VERB_
 
-//    _CONJUNCTION_,
-//    _NOUN_,
-//    _PLACE_,
-//    _PRONOUN_,
+    //    _CONJUNCTION_,
+    //    _NOUN_,
+    //    _PLACE_,
+    //    _PRONOUN_,
 };
 
 /**
  * The list of room name patterns.
- * @const
  */
 const PATTERNS = [
     '_ADJECTIVE__PLURALNOUN__VERB__ADVERB_'
@@ -1068,20 +1064,20 @@ const PATTERNS = [
 /**
  * Generates a new room name.
  *
- * @returns {string} A newly-generated room name.
+ * @returns A newly-generated room name.
  */
-export function generateRoomWithoutSeparator() {
+export const generateRoomWithoutSeparator = () => {
     // XXX Note that if more than one pattern is available, the choice of 'name'
     // won't have a uniform distribution amongst all patterns (names from
     // patterns with fewer options will have higher probability of being chosen
     // that names from patterns with more options).
-    let name = randomElement(PATTERNS);
+    let name = randomElement( PATTERNS );
 
-    while (_hasTemplate(name)) {
-        for (const template in CATEGORIES) { // eslint-disable-line guard-for-in
-            const word = randomElement(CATEGORIES[template]);
+    while ( _hasTemplate( name ) ) {
+        for ( const template in CATEGORIES ) { // eslint-disable-line guard-for-in
+            const word = randomElement( CATEGORIES[ template ] );
 
-            name = name.replace(template, word);
+            name = name.replace( template, word );
         }
     }
 
@@ -1092,14 +1088,14 @@ export function generateRoomWithoutSeparator() {
  * Determines whether a specific string contains at least one of the
  * templates/categories.
  *
- * @param {string} s - String containing categories.
+ * @param s - String containing categories.
  * @private
  * @returns {boolean} True if the specified string contains at least one of the
  * templates/categories; otherwise, false.
  */
-function _hasTemplate(s) {
-    for (const template in CATEGORIES) {
-        if (s.indexOf(template) >= 0) {
+const _hasTemplate = ( s: string ) => {
+    for ( const template in CATEGORIES ) {
+        if ( s.indexOf( template ) >= 0 ) {
             return true;
         }
     }

@@ -1,5 +1,5 @@
 // TODO: Maybe fix the values to 'Chrome', 'Internet Explorer', etc. Currently
-// this values needs to be as they are becuse they are going to analytics,
+// this values needs to be as they are because they are going to analytics,
 // callstats, etc.
 
 export const CHROME = 'chrome';

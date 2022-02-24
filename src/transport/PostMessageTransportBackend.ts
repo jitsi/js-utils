@@ -1,9 +1,7 @@
-import Postis from './postis.js';
+import Postis from './postis';
 
 /**
  * The default options for postis.
- *
- * @type {Object}
  */
 const DEFAULT_POSTIS_OPTIONS = {
     window: window.opener || window.parent
@@ -11,8 +9,6 @@ const DEFAULT_POSTIS_OPTIONS = {
 
 /**
  * The postis method used for all messages.
- *
- * @type {string}
  */
 const POSTIS_METHOD_NAME = 'message';
 
@@ -20,18 +16,26 @@ const POSTIS_METHOD_NAME = 'message';
  * Implements message transport using the postMessage API.
  */
 export default class PostMessageTransportBackend {
+    postis: {
+        listen: ( method?: any, callback?: any ) => void;
+        send: ( opts?: any ) => void;
+        ready: ( callback?: any ) => void;
+        destroy: ( callback?: any ) => void;
+    };
+    _receiveCallback: ( message?: unknown ) => void;
+
     /**
      * Creates new PostMessageTransportBackend instance.
      *
-     * @param {Object} options - Optional parameters for configuration of the
+     * @param options - Optional parameters for configuration of the
      * transport.
      */
-    constructor({ postisOptions } = {}) {
+    constructor( { postisOptions }: { postisOptions?: object } = {} ) {
         // eslint-disable-next-line new-cap
-        this.postis = Postis({
+        this.postis = Postis( {
             ...DEFAULT_POSTIS_OPTIONS,
             ...postisOptions
-        });
+        } );
 
         this._receiveCallback = () => {
             // Do nothing until a callback is set by the consumer of
@@ -40,38 +44,32 @@ export default class PostMessageTransportBackend {
 
         this.postis.listen(
             POSTIS_METHOD_NAME,
-            message => this._receiveCallback(message));
+            ( message: unknown ) => this._receiveCallback( message ) );
     }
 
     /**
      * Disposes the allocated resources.
-     *
-     * @returns {void}
      */
-    dispose() {
-        this.postis.destroy();
-    }
+    readonly dispose = () => this.postis.destroy();
 
     /**
      * Sends the passed message.
      *
-     * @param {Object} message - The message to be sent.
-     * @returns {void}
+     * @param message - The message to be sent.
      */
-    send(message) {
-        this.postis.send({
+    readonly send = ( message: unknown ) => {
+        this.postis.send( {
             method: POSTIS_METHOD_NAME,
             params: message
-        });
+        } );
     }
 
     /**
      * Sets the callback for receiving data.
      *
-     * @param {Function} callback - The new callback.
-     * @returns {void}
+     * @param callback - The new callback.
      */
-    setReceiveCallback(callback) {
+    readonly setReceiveCallback = ( callback: ( message?: unknown ) => void ) => {
         this._receiveCallback = callback;
     }
 }
