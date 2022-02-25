@@ -1,3 +1,9 @@
+import BrowserDetection from "./BrowserDetection";
+
 describe( "BrowserDetection tests", () => {
-    // TODO: add tests
+    it( "can be constructed", () => {
+        expect( new BrowserDetection() ).toBeDefined();
+    } );
+
+    // TODO: add functionality based tests
 } );

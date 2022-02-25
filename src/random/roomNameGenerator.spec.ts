@@ -1,3 +1,7 @@
+import { generateRoomWithoutSeparator } from "./roomNameGenerator";
+
 describe( "randomNameGenerator tests", () => {
-    // TODO: add tests
+    it( "generates a random name", () => {
+        expect( generateRoomWithoutSeparator() ).toBeDefined();
+    } );
 } );

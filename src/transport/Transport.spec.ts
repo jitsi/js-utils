@@ -1,3 +1,9 @@
+import Transport from "./Transport";
+
 describe( "Transport tests", () => {
-    // TODO: add tests
+    it( "can be constructed", () => {
+        expect( new Transport() ).toBeDefined();
+    } );
+
+    // TODO: add uni test
 } );
