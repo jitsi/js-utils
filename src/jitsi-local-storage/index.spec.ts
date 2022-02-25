@@ -1,7 +1,7 @@
-import { jitsiLocalStorage } from "./index";
+import { jitsiLocalStorage } from './index';
 
-describe( "jitsi-local-storage tests", () => {
-    it( "can be constructed", () => {
+describe( 'jitsi-local-storage tests', () => {
+    it( 'can be constructed', () => {
         expect( jitsiLocalStorage ).toBeDefined();
     } );
 

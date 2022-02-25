@@ -14,7 +14,7 @@
       "esnext",
       "dom"
     ],
-    "outDir": "lib/",
+    "outDir": "lib/"
   },
   "include": [
     "src/**/*.js",

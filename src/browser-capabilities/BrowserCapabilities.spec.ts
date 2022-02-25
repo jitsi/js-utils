@@ -1,7 +1,7 @@
-import BrowserCapabilities from "./BrowserCapabilities";
+import BrowserCapabilities from './BrowserCapabilities';
 
-describe( "BrowserCapabilities tests", () => {
-    it( "can be constructed", () => {
+describe( 'BrowserCapabilities tests', () => {
+    it( 'can be constructed', () => {
         expect( new BrowserCapabilities() ).toBeDefined();
     } );
 
