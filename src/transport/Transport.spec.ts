@@ -1,7 +1,7 @@
-import Transport from "./Transport";
+import Transport from './Transport';
 
-describe( "Transport tests", () => {
-    it( "can be constructed", () => {
+describe( 'Transport tests', () => {
+    it( 'can be constructed', () => {
         expect( new Transport() ).toBeDefined();
     } );
 

@@ -17,10 +17,10 @@ const POSTIS_METHOD_NAME = 'message';
  */
 export default class PostMessageTransportBackend {
     postis: {
-        listen: ( method?: any, callback?: any ) => void;
-        send: ( opts?: any ) => void;
-        ready: ( callback?: any ) => void;
-        destroy: ( callback?: any ) => void;
+        listen: ( method?: unknown, callback?: unknown ) => void;
+        send: ( opts?: unknown ) => void;
+        ready: ( callback?: unknown ) => void;
+        destroy: ( callback?: unknown ) => void;
     };
     _receiveCallback: ( message?: unknown ) => void;
 
@@ -62,7 +62,7 @@ export default class PostMessageTransportBackend {
             method: POSTIS_METHOD_NAME,
             params: message
         } );
-    }
+    };
 
     /**
      * Sets the callback for receiving data.
@@ -71,5 +71,5 @@ export default class PostMessageTransportBackend {
      */
     readonly setReceiveCallback = ( callback: ( message?: unknown ) => void ) => {
         this._receiveCallback = callback;
-    }
+    };
 }

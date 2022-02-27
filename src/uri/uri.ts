@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * A list of characters to be excluded/removed from the room component/segment
  * of a conference/meeting URI/URL. The list is based on RFC 3986 and the jxmpp
@@ -7,9 +8,6 @@ const _ROOM_EXCLUDE_PATTERN = '[\\:\\?#\\[\\]@!$&\'()*+,;=></"]';
 
 /**
  * The {@link RegExp} pattern of the authority of a URI.
- *
- * @private
- * @type {string}
  */
 const _URI_AUTHORITY_PATTERN = '(//[^/?#]+)';
 
@@ -34,9 +32,9 @@ export const URI_PROTOCOL_PATTERN = '^([a-z][a-z0-9\\.\\+-]*:)';
  *
  * @param room - The room (name) to fix.
  */
-const _fixRoom = ( room?: string ) => room
+const _fixRoom = ( room?: string ) => ( room
     ? room.replace( new RegExp( _ROOM_EXCLUDE_PATTERN, 'g' ), '' )
-    : room;
+    : room );
 
 /**
  * Fixes the scheme part of a specific URI (string) so that it contains a
@@ -75,7 +73,7 @@ const _fixURIStringScheme = ( uri: string ) => {
     }
 
     return uri;
-}
+};
 
 /**
  * Gets the (Web application) context root defined by a specific location (URI).
@@ -92,7 +90,7 @@ export const getLocationContextRoot = ( { pathname }: { pathname: string } ): st
         contextRootEndIndex === -1
             ? '/'
             : pathname.substring( 0, contextRootEndIndex + 1 ) );
-}
+};
 
 /**
  * Constructs a new {@code Array} with URL parameter {@code String}s out of a
@@ -116,17 +114,43 @@ const _objectToURLParamsArray = ( obj: { [ key: string ]: unknown } = {} ): Arra
     }
 
     return params;
-}
+};
 
 type Uri = {
     hash?: string;
-    toString: ( value?: any ) => string;
+    toString: ( value?: unknown ) => string;
     host?: string;
     hostname?: string;
     pathname: string;
     port?: string;
     protocol?: string;
     search?: string;
+};
+
+// TODO: the reference to this here feels wrong
+/**
+ * Implements {@code href} and {@code toString} for the {@code Object} returned
+ * by {@link #parseStandardURIString}.
+ *
+ * @param [thiz] - An {@code Object} returned by
+ * {@code #parseStandardURIString} if any; otherwise, it is presumed that the
+ * function is invoked on such an instance.
+ */
+const _standardURIToString = ( thiz: unknown ): string => {
+    // eslint-disable-next-line no-invalid-this
+    const { hash, host, pathname, protocol, search } = (thiz || this) as any;
+    let str = '';
+
+    protocol && ( str += protocol );
+
+    // TODO userinfo
+
+    host && ( str += `//${ host }` );
+    str += pathname || '/';
+    search && ( str += search );
+    hash && ( str += hash );
+
+    return str;
 };
 
 /**
@@ -225,7 +249,7 @@ export const parseStandardURIString = ( str: string ): Uri => {
 
     /* eslint-enable no-param-reassign */
     return obj;
-}
+};
 
 type UriExtended = Uri & {
     contextRoot?: string;
@@ -276,64 +300,7 @@ export const parseURIString = ( uri?: string ): UriExtended | undefined => {
     obj.room = room;
 
     return obj;
-}
-
-/**
- * Implements {@code href} and {@code toString} for the {@code Object} returned
- * by {@link #parseStandardURIString}.
- *
- * @param [thiz] - An {@code Object} returned by
- * {@code #parseStandardURIString} if any; otherwise, it is presumed that the
- * function is invoked on such an instance.
- */
-const _standardURIToString = ( thiz: any ): string => {
-    // eslint-disable-next-line no-invalid-this
-    const { hash, host, pathname, protocol, search } = thiz || this;
-    let str = '';
-
-    protocol && ( str += protocol );
-
-    // TODO userinfo
-
-    host && ( str += `//${ host }` );
-    str += pathname || '/';
-    search && ( str += search );
-    hash && ( str += hash );
-
-    return str;
-}
-
-/**
- * Attempts to return a {@code String} representation of a specific
- * {@code Object} which is supposed to represent a URL. Obviously, if a
- * {@code String} is specified, it is returned. If a {@code URL} is specified,
- * its {@code URL#href} is returned. Additionally, an {@code Object} similar to
- * the one accepted by the constructor of Web's ExternalAPI is supported on both
- * mobile/React Native and Web/React.
- *
- * @param {Object|string} obj - The URL to return a {@code String}
- * representation of.
- * @returns - A {@code String} representation of the specified
- * {@code obj} which is supposed to represent a URL.
- */
-export const toURLString = ( obj: unknown ) => {
-    switch ( typeof obj ) {
-        case 'object':
-            if ( obj ) {
-                if ( obj instanceof URL ) {
-                    return obj.href;
-                } else {
-                    return urlObjectToString( obj );
-                }
-            }
-            break;
-
-        case 'string':
-            return String( obj );
-    }
-
-    return undefined;
-}
+};
 
 type UrlProperties = Partial<{
     serverURL: string;
@@ -474,4 +441,36 @@ export const urlObjectToString = ( o: UrlProperties ): string => {
     url.hash = hash;
 
     return url.toString() || undefined;
-}
+};
+
+/**
+ * Attempts to return a {@code String} representation of a specific
+ * {@code Object} which is supposed to represent a URL. Obviously, if a
+ * {@code String} is specified, it is returned. If a {@code URL} is specified,
+ * its {@code URL#href} is returned. Additionally, an {@code Object} similar to
+ * the one accepted by the constructor of Web's ExternalAPI is supported on both
+ * mobile/React Native and Web/React.
+ *
+ * @param {Object|string} obj - The URL to return a {@code String}
+ * representation of.
+ * @returns - A {@code String} representation of the specified
+ * {@code obj} which is supposed to represent a URL.
+ */
+export const toURLString = ( obj: unknown ) => {
+    switch ( typeof obj ) {
+        case 'object':
+            if ( obj ) {
+                if ( obj instanceof URL ) {
+                    return obj.href;
+                }
+
+                return urlObjectToString( obj );
+            }
+            break;
+
+        case 'string':
+            return String( obj );
+    }
+
+    return undefined;
+};

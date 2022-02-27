@@ -63,7 +63,7 @@ const _detectChromiumBased = (): BrowserInfo | undefined => {
     }
 
     return browserInfo;
-}
+};
 
 /**
  * Detects Electron environment.
@@ -80,13 +80,14 @@ const _detectElectron = (): BrowserInfo | undefined => {
             name: ELECTRON,
             version
         };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } else if ( typeof ( window as any ).JitsiMeetElectron !== 'undefined' ) {
         return {
             name: ELECTRON,
             version: undefined
         };
     }
-}
+};
 
 /**
  * Detects NWJS environment.
@@ -104,7 +105,7 @@ const _detectNWJS = (): BrowserInfo | undefined => {
             version
         };
     }
-}
+};
 
 /**
  * Detects React Native environment.
@@ -133,7 +134,7 @@ const _detectReactNative = (): BrowserInfo | undefined => {
             version
         };
     }
-}
+};
 
 /**
  * Returns information about the current browser.
@@ -175,7 +176,7 @@ const _detect = ( bowser: Bowser.Parser.Parser ): BrowserInfo => {
         name: UNKNOWN,
         version: undefined
     };
-}
+};
 
 /**
  * Implements browser detection.
@@ -280,7 +281,7 @@ export default class BrowserDetection {
         if ( this._version ) {
             return this._bowser.satisfies( checkTree );
         }
-    }
+    };
 
     /**
      * Compares the passed version with the current browser version.

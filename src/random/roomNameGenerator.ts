@@ -1062,6 +1062,25 @@ const PATTERNS = [
 ];
 
 /**
+ * Determines whether a specific string contains at least one of the
+ * templates/categories.
+ *
+ * @param s - String containing categories.
+ * @private
+ * @returns {boolean} True if the specified string contains at least one of the
+ * templates/categories; otherwise, false.
+ */
+const _hasTemplate = ( s: string ) => {
+    for ( const template in CATEGORIES ) {
+        if ( s.indexOf( template ) >= 0 ) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+/**
  * Generates a new room name.
  *
  * @returns A newly-generated room name.
@@ -1082,26 +1101,7 @@ export const generateRoomWithoutSeparator = () => {
     }
 
     return name;
-}
-
-/**
- * Determines whether a specific string contains at least one of the
- * templates/categories.
- *
- * @param s - String containing categories.
- * @private
- * @returns {boolean} True if the specified string contains at least one of the
- * templates/categories; otherwise, false.
- */
-const _hasTemplate = ( s: string ) => {
-    for ( const template in CATEGORIES ) {
-        if ( s.indexOf( template ) >= 0 ) {
-            return true;
-        }
-    }
-
-    return false;
-}
+};
 
 /*
 function findDuplicates(array) {

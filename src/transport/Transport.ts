@@ -14,10 +14,12 @@ type Message = {
 
 type ListenerFunc = ( ...args: Array<unknown> ) => boolean | undefined;
 
+type ResponseFunc = ( message: unknown ) => void;
+
 type Backend = {
     dispose: () => void;
     send: ( message: Message ) => void;
-    setReceiveCallback: ( callback: Function ) => void;
+    setReceiveCallback: ( callback: () => void ) => void;
 };
 
 /**
@@ -27,8 +29,8 @@ type Backend = {
 export default class Transport {
     _listeners: Map<string, Set<ListenerFunc>>;
     _requestID: number;
-    _responseHandlers: Map<number, Function>;
-    _unprocessedMessages: Set<Object>;
+    _responseHandlers: Map<number, ResponseFunc>;
+    _unprocessedMessages: Set<Array<unknown>>;
     _backend: Backend;
 
     protected addListener: ( eventName: string, listener: ListenerFunc ) => void;
@@ -56,14 +58,14 @@ export default class Transport {
          * Maps an IDs of the requests and handlers that will process the
          * responses of those requests.
          */
-        this._responseHandlers = new Map<number, Function>();
+        this._responseHandlers = new Map<number, ResponseFunc>();
 
         /**
          * A set with the events and requests that were received but not
          * processed by any listener. They are later passed on every new
          * listener until they are processed.
          */
-        this._unprocessedMessages = new Set<Object>();
+        this._unprocessedMessages = new Set<Array<unknown>>();
 
         /**
          * Alias.
@@ -83,7 +85,7 @@ export default class Transport {
             this._backend.dispose();
             this._backend = null;
         }
-    }
+    };
 
     /**
      * Handles incoming messages from the transport backend.
@@ -99,7 +101,7 @@ export default class Transport {
                 this._responseHandlers.delete( message.id );
             }
         } else if ( message.type === MESSAGE_TYPE_REQUEST ) {
-            this.emit( 'request', message.data, ( result: any, error: any ) => {
+            this.emit( 'request', message.data, ( result: unknown, error: unknown ) => {
                 this._backend.send( {
                     type: MESSAGE_TYPE_RESPONSE,
                     error,
@@ -110,7 +112,7 @@ export default class Transport {
         } else {
             this.emit( 'event', message.data );
         }
-    }
+    };
 
     /**
      * Disposes the allocated resources.
@@ -120,7 +122,7 @@ export default class Transport {
         this._unprocessedMessages.clear();
         this.removeAllListeners();
         this._disposeBackend();
-    }
+    };
 
     /**
      * Calls each of the listeners registered for the event named eventName, in
@@ -145,7 +147,7 @@ export default class Transport {
         }
 
         return isProcessed;
-    }
+    };
 
     /**
      * Adds the listener function to the listeners collection for the event
@@ -167,13 +169,13 @@ export default class Transport {
         listenersForEvent.add( listener );
 
         this._unprocessedMessages.forEach( args => {
-            if ( listener( ...args as any ) ) {
+            if ( listener( ...args as Array<unknown> ) ) {
                 this._unprocessedMessages.delete( args );
             }
         } );
 
         return this;
-    }
+    };
 
     /**
      * Removes all listeners, or those of the specified eventName.
@@ -191,7 +193,7 @@ export default class Transport {
         }
 
         return this;
-    }
+    };
 
     /**
      * Removes the listener function from the listeners collection for the event
@@ -210,7 +212,7 @@ export default class Transport {
         }
 
         return this;
-    }
+    };
 
     /**
      * Sends the passed event.
@@ -224,7 +226,7 @@ export default class Transport {
                 data: event
             } );
         }
-    }
+    };
 
     /**
      * Sending request.
@@ -259,7 +261,7 @@ export default class Transport {
                 id
             } );
         } );
-    }
+    };
 
     /**
      * Changes the current backend transport.
@@ -271,5 +273,5 @@ export default class Transport {
 
         this._backend = backend;
         this._backend.setReceiveCallback( this._onMessageReceived.bind( this ) );
-    }
+    };
 }

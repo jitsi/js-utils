@@ -1,0 +1,30 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "parserOptions": {
+        "requireConfigFile": false
+    },
+    "extends": [
+        "@jitsi/eslint-config",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+        "space-in-parens": "off",
+        "camelcase": "off",
+        "computed-property-spacing": "off",
+        "padding-line-between-statements": "off",
+        "template-curly-spacing": "off",
+        "operator-linebreak": "off",
+        "import/order": "off",
+        "no-extra-parens": "off",
+        "no-shadow": "off",
+        "prefer-rest-params": "off",
+        "prefer-spread": "off",
+        "no-extra-bind": "off",
+        "no-param-reassign": "off",
+        "max-len": "off",
+        "indent": "off"
+    }
+}

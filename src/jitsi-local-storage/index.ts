@@ -13,7 +13,9 @@ class DummyLocalStorage extends EventEmitter {
     /**
      * Empties all keys out of the storage.
      */
-    readonly clear = () => this._storage = {};
+    readonly clear = () => {
+        this._storage = {};
+    };
 
     /**
      * Returns the number of data items stored in the Storage object.
@@ -39,7 +41,9 @@ class DummyLocalStorage extends EventEmitter {
      * @param keyName - The key name.
      * @param keyValue - The key value.
      */
-    readonly setItem = ( keyName: string, keyValue: unknown ) => this._storage[ keyName ] = keyValue;
+    readonly setItem = ( keyName: string, keyValue: unknown ) => {
+        this._storage[ keyName ] = keyValue;
+    };
 
     /**
      * When passed a key name, will remove that key from the storage.
@@ -62,7 +66,7 @@ class DummyLocalStorage extends EventEmitter {
         }
 
         return keys[ n ];
-    }
+    };
 
     /**
      * Serializes the content of the storage.
@@ -113,7 +117,7 @@ class JitsiLocalStorage extends EventEmitter {
     readonly clear = () => {
         this._storage.clear();
         this.emit( 'changed' );
-    }
+    };
 
     /**
      * Returns the number of data items stored in the Storage object.
@@ -140,13 +144,13 @@ class JitsiLocalStorage extends EventEmitter {
      * creating/updating.
      * @param dontEmitChangedEvent - If true a changed event won't be emitted.
      */
-    readonly setItem = ( keyName: string, keyValue: string, dontEmitChangedEvent: boolean = false ) => {
+    readonly setItem = ( keyName: string, keyValue: string, dontEmitChangedEvent = false ) => {
         this._storage.setItem( keyName, keyValue );
 
         if ( !dontEmitChangedEvent ) {
             this.emit( 'changed' );
         }
-    }
+    };
 
     /**
      * Remove a key from the storage.
@@ -155,7 +159,7 @@ class JitsiLocalStorage extends EventEmitter {
     readonly removeItem = ( keyName: string ) => {
         this._storage.removeItem( keyName );
         this.emit( 'changed' );
-    }
+    };
 
     /**
      * Returns the name of the nth key in the list, or null if n is greater
@@ -185,7 +189,7 @@ class JitsiLocalStorage extends EventEmitter {
         }
 
         return JSON.stringify( localStorageContent );
-    }
+    };
 }
 
 export const jitsiLocalStorage = new JitsiLocalStorage();
