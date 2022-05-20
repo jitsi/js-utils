@@ -7,7 +7,7 @@ import md5 from 'js-md5';
  * @param {string} baseURL - Base Gravatar URL.
  * @returns {string} - Gravatar URL.
  */
-export function getGravatarURL(key, baseURL = 'https://seccdn.libravatar.org/avatar/') {
+export function getGravatarURL(key, baseURL = 'https://www.gravatar.com/avatar/') {
     const urlSuffix = '?d=404&size=200';
 
     // If the key is a valid email, we hash it. If it's not, we assume it's already a hashed format
