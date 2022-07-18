@@ -79,10 +79,21 @@ class DummyLocalStorage extends EventEmitter {
     /**
      * Serializes the content of the storage.
      *
+     * @param {Array<string>} ignore - Array with keys from the local storage to be ignored.
      * @returns {string} - The serialized content.
      */
-    serialize() {
-        return JSON.stringify(this._storage);
+    serialize(ignore = []) {
+        if (ignore.length === 0) {
+            return JSON.stringify(this._storage);
+        }
+
+        const storageCopy = { ...this._storage };
+
+        ignore.forEach(key => {
+            delete storageCopy[key];
+        });
+
+        return JSON.stringify(storageCopy);
     }
 }
 
@@ -188,11 +199,12 @@ class JitsiLocalStorage extends EventEmitter {
     /**
      * Serializes the content of the storage.
      *
+     * @param {Array<string>} ignore - Array with keys from the local storage to be ignored.
      * @returns {string} - The serialized content.
      */
-    serialize() {
+    serialize(ignore = []) {
         if (this.isLocalStorageDisabled()) {
-            return this._storage.serialize();
+            return this._storage.serialize(ignore);
         }
 
         const length = this._storage.length;
@@ -201,7 +213,9 @@ class JitsiLocalStorage extends EventEmitter {
         for (let i = 0; i < length; i++) {
             const key = this._storage.key(i);
 
-            localStorageContent[key] = this._storage.getItem(key);
+            if (!ignore.includes(key)) {
+                localStorageContent[key] = this._storage.getItem(key);
+            }
         }
 
         return JSON.stringify(localStorageContent);
