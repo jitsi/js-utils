@@ -434,7 +434,7 @@ const _PLURALNOUN_ = [
     'Settings', 'Settlements', 'Settlers', 'Shades',
     'Shadows', 'Shakes', 'Shames', 'Shapes', 'Shareholders', 'Shares',
     'Sheep', 'Sheets', 'Shells', 'Shelters', 'Shelves', 'Shifts',
-    'Shippings', 'Ships', 'Shirts', 'Shocks', 'Shoes', 'Shootings',
+    'Shippings', 'Ships', 'Shirts', 'Shocks', 'Shoes',
     'Shoots', 'Shoppings', 'Shops', 'Shores', 'Shortages', 'Shots',
     'Shoulders', 'Shouts', 'Showers', 'Shows', 'Siblings', 'Sides', 'Sighs',
     'Sights', 'Signals', 'Signatures', 'Significances', 'Signs', 'Silences',
