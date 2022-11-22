@@ -49,7 +49,7 @@ const _PLURALNOUN_ = [
     'Barriers', 'Bars', 'Baseballs', 'Basements', 'Bases',
     'Basketballs', 'Baskets', 'Basses', 'Bathrooms', 'Baths', 'Bats',
     'Battlefields', 'Battles', 'Bays', 'Beaches', 'Beams',
-    'Beans', 'Bears', 'Beasts', 'Beats', 'Beauties', 
+    'Beans', 'Bears', 'Beasts', 'Beats', 'Beauties',
     'Beefs', 'Beers', 'Bees', 'Beginnings', 'Behalves', 'Behaviours',
     'Beings', 'Beliefs', 'Bells', 'Belts', 'Benches', 'Benchmarks', 'Bends',
     'Beneficiaries', 'Benefits', 'Bests', 'Bets', 'Betters', 'Biases',
