@@ -132,6 +132,23 @@ class JitsiLocalStorage extends EventEmitter {
     }
 
     /**
+     * Switch between window.localStorage and DummyLocalStorage.
+     */
+    setLocalStorageDisabled(value) {
+        this._localStorageDisabled = value;
+
+        try {
+            this._storage = value ? new DummyLocalStorage() : window.localStorage;
+        } catch (ignore) {
+            // localStorage throws an exception.
+        }
+
+        if (!this._storage) {
+            this._storage = new DummyLocalStorage();
+        }
+    }
+
+    /**
      * Empties all keys out of the storage.
      *
      * @returns {void}
