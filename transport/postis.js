@@ -1,5 +1,7 @@
 /* eslint-disable */
 
+import { safeJsonParse } from '../json';
+
 // Originally: https://github.com/adtile/postis
 //
 // The MIT License
@@ -39,7 +41,7 @@ function Postis(options) {
   var listener = function(event) {
     var data;
     try {
-      data = JSON.parse(event.data);
+      data = safeJsonParse(event.data);
     } catch (e) {
       return;
     }
