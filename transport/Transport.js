@@ -244,11 +244,16 @@ export default class Transport {
                 }
             });
 
-            this._backend.send({
-                type: MESSAGE_TYPE_REQUEST,
-                data: request,
-                id
-            });
+            try {
+                this._backend.send({
+                    type: MESSAGE_TYPE_REQUEST,
+                    data: request,
+                    id
+                });
+            } catch (error) {
+                this._responseHandlers.delete(id);
+                reject(error);
+            }
         });
     }
 
