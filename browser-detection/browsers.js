@@ -12,6 +12,8 @@ export const INTERNET_EXPLORER = 'iexplorer';
 
 export const SAFARI = 'safari';
 
+export const WEBKIT = 'webkit';
+
 export const NWJS = 'nwjs';
 
 export const ELECTRON = 'electron';

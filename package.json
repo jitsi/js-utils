@@ -15,8 +15,8 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "@hapi/bourne": "^3.0.0",
-    "bowser": "2.7.0",
-    "js-md5": "0.7.3"
+    "js-md5": "0.7.3",
+    "ua-parser-js": "1.0.35"
   },
   "devDependencies": {
     "babel-eslint": "8.0.3",

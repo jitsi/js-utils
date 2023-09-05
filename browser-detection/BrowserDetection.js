@@ -1,4 +1,4 @@
-import Bowser from 'bowser';
+import { UAParser } from 'ua-parser-js';
 
 import {
     CHROME,
@@ -6,17 +6,18 @@ import {
     FIREFOX,
     INTERNET_EXPLORER,
     SAFARI,
+    WEBKIT,
     NWJS,
     ELECTRON,
     REACT_NATIVE,
-    UNKNOWN
+    UNKNOWN,
 } from './browsers.js';
 
 /**
- * Maps the names of the browsers from bowser to the internal names defined in
+ * Maps the names of the browsers from ua-parser to the internal names defined in
  * ./browsers.js
  */
-const bowserNameToJitsiName = {
+const parserNameToJitsiName = {
     'Chrome': CHROME,
     'Chromium': CHROME,
     'Opera': OPERA,
@@ -36,10 +37,6 @@ const bowserNameToJitsiName = {
  */
 function _detectChromiumBased() {
     const userAgent = navigator.userAgent;
-    const browserInfo = {
-        name: UNKNOWN,
-        version: undefined
-    };
 
     if (userAgent.match(/Chrome/) && !userAgent.match(/Edge/)) {
         // Edge is currenly supported only on desktop and android.
@@ -48,16 +45,28 @@ function _detectChromiumBased() {
             const version = userAgent.match(/Chrome\/([\d.]+)/)[1];
 
             if (Number.parseInt(version, 10) > 72) {
-                browserInfo.name = CHROME;
-                browserInfo.version = version;
+                return {
+                    name: CHROME,
+                    version
+                };
             }
         } else {
-            browserInfo.name = CHROME;
-            browserInfo.version = userAgent.match(/Chrome\/([\d.]+)/)[1];
+            return {
+                name: CHROME,
+                version: userAgent.match(/Chrome\/([\d.]+)/)[1]
+            };
         }
     }
+}
 
-    return browserInfo;
+function _detectWebKitBased(parser) {
+    const { name, version } = parser.getEngine();
+    if (name === 'WebKit') {
+        return {
+            name: WEBKIT,
+            version
+        };
+    }
 }
 
 /**
@@ -133,10 +142,10 @@ function _detectReactNative() {
 
 /**
  * Returns information about the current browser.
- * @param {Object} - The bowser instance.
+ * @param {Object} - The parser instance.
  * @returns {Object} - The name and version of the browser.
  */
-function _detect(bowser) {
+function _detect(parser) {
     let browserInfo;
     const detectors = [
         _detectReactNative,
@@ -152,17 +161,22 @@ function _detect(bowser) {
         }
     }
 
-    const name = bowser.getBrowserName();
+    const { name, version } = parser.getBrowser();
 
-    if (name in bowserNameToJitsiName) {
+    if (name in parserNameToJitsiName) {
         return {
-            name: bowserNameToJitsiName[name],
-            version: bowser.getBrowserVersion()
+            name: parserNameToJitsiName[name],
+            version
         };
     }
 
     // Detect other browsers with the Chrome engine, such as Vivaldi and Brave.
     browserInfo = _detectChromiumBased();
+    if (browserInfo) {
+        return browserInfo;
+    }
+
+    browserInfo = _detectWebKitBased(parser);
     if (browserInfo) {
         return browserInfo;
     }
@@ -187,14 +201,14 @@ export default class BrowserDetection {
     constructor(browserInfo) {
         let name, version;
 
-        this._bowser = Bowser.getParser(navigator.userAgent);
+        this._parser = new UAParser(navigator.userAgent);
         if (typeof browserInfo === 'undefined') {
-            const detectedBrowserInfo = _detect(this._bowser);
+            const detectedBrowserInfo = _detect(this._parser);
 
             name = detectedBrowserInfo.name;
             version = detectedBrowserInfo.version;
-        } else if (browserInfo.name in bowserNameToJitsiName) {
-            name = bowserNameToJitsiName[browserInfo.name];
+        } else if (browserInfo.name in parserNameToJitsiName) {
+            name = parserNameToJitsiName[browserInfo.name];
             version = browserInfo.version;
         } else {
             name = UNKNOWN;
@@ -254,6 +268,14 @@ export default class BrowserDetection {
     }
 
     /**
+     * Checks if current browser is based on webkit.
+     * @returns {boolean}
+     */
+    isWebKit() {
+        return this._name === WEBKIT;
+    }
+
+    /**
      * Checks if current environment is NWJS.
      * @returns {boolean}
      */
@@ -286,25 +308,6 @@ export default class BrowserDetection {
     }
 
     /**
-     * Check if the parsed browser matches the passed condition.
-     *
-     * @param {Object} checkTree - It's one or two layered object, which can include a
-     * platform or an OS on the first layer and should have browsers specs on the
-     * bottom layer.
-     * Eg. { chrome: '>71.1.0' }
-     *     { windows: { chrome: '<70.2' } }
-     * @returns {boolean | undefined} - Returns true if the browser satisfies the set
-     * conditions, false if not and undefined when the browser is not defined in the
-     * checktree object or when the current browser's version is unknown.
-     * @private
-     */
-    _checkCondition(checkTree) {
-        if (this._version) {
-            return this._bowser.satisfies(checkTree);
-        }
-    }
-
-    /**
      * Compares the passed version with the current browser version.
      *
      * @param {*} version - The version to compare with. Anything different
@@ -314,7 +317,7 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionGreaterThan(version) {
-        return this._checkCondition({ [this._name]: `>${version}` });
+        return this._parser.getBrowser().version >= version;
     }
 
     /**
@@ -327,7 +330,7 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionLessThan(version) {
-        return this._checkCondition({ [this._name]: `<${version}` });
+        return this._parser.getBrowser().version >= version;
     }
 
     /**
@@ -341,6 +344,6 @@ export default class BrowserDetection {
      * A loose-equality operator is used here so that it matches the sub-versions as well.
      */
     isVersionEqualTo(version) {
-        return this._checkCondition({ [this._name]: `~${version}` });
+        return this._parser.getBrowser().version === version;
     }
 }
