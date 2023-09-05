@@ -12,8 +12,6 @@ export const INTERNET_EXPLORER = 'iexplorer';
 
 export const SAFARI = 'safari';
 
-export const WEBKIT = 'webkit';
-
 export const NWJS = 'nwjs';
 
 export const ELECTRON = 'electron';
@@ -21,3 +19,25 @@ export const ELECTRON = 'electron';
 export const REACT_NATIVE = 'react-native';
 
 export const UNKNOWN = 'unknown';
+
+/**
+ * Maps the names of the browsers from ua-parser to the internal names defined in
+ * ./browsers.js
+ */
+export const PARSER_TO_JITSI_NAME = {
+    'Chrome': CHROME,
+    'Chromium': CHROME,
+    'Opera': OPERA,
+    'Firefox': FIREFOX,
+    'Internet Explorer': INTERNET_EXPLORER,
+    'Safari': SAFARI
+};
+
+export const BLINK = 'blink';
+
+export const WEBKIT = 'webkit';
+
+export const ENGINES = {
+    'Blink': BLINK,
+    'WebKit': WEBKIT
+};

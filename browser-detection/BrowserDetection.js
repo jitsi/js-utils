@@ -11,63 +11,10 @@ import {
     ELECTRON,
     REACT_NATIVE,
     UNKNOWN,
-} from './browsers.js';
-
-/**
- * Maps the names of the browsers from ua-parser to the internal names defined in
- * ./browsers.js
- */
-const parserNameToJitsiName = {
-    'Chrome': CHROME,
-    'Chromium': CHROME,
-    'Opera': OPERA,
-    'Firefox': FIREFOX,
-    'Internet Explorer': INTERNET_EXPLORER,
-    'Safari': SAFARI
-};
-
-/**
- * Detects a Chromium based environent.
- *
- * NOTE: Here we cannot check solely for "Chrome" in the UA, because Edge has
- * it too. We need to check explicitly for chromium based Edge first and then
- * detect other chromium based browsers.
- *
- * @returns {Object|undefined} - The name (CHROME) and version.
- */
-function _detectChromiumBased() {
-    const userAgent = navigator.userAgent;
-
-    if (userAgent.match(/Chrome/) && !userAgent.match(/Edge/)) {
-        // Edge is currenly supported only on desktop and android.
-        if (userAgent.match(/Edg(A?)/)) {
-            // Compare the underlying chromium version.
-            const version = userAgent.match(/Chrome\/([\d.]+)/)[1];
-
-            if (Number.parseInt(version, 10) > 72) {
-                return {
-                    name: CHROME,
-                    version
-                };
-            }
-        } else {
-            return {
-                name: CHROME,
-                version: userAgent.match(/Chrome\/([\d.]+)/)[1]
-            };
-        }
-    }
-}
-
-function _detectWebKitBased(parser) {
-    const { name, version } = parser.getEngine();
-    if (name === 'WebKit') {
-        return {
-            name: WEBKIT,
-            version
-        };
-    }
-}
+    PARSER_TO_JITSI_NAME,
+    SUPPORTED_ENGINES,
+    BLINK
+} from './constants.js';
 
 /**
  * Detects Electron environment.
@@ -78,11 +25,9 @@ function _detectElectron() {
     const userAgent = navigator.userAgent;
 
     if (userAgent.match(/Electron/)) {
-        const version = userAgent.match(/Electron(?:\s|\/)([\d.]+)/)[1];
-
         return {
             name: ELECTRON,
-            version
+            version:  userAgent.match(/Electron(?:\s|\/)([\d.]+)/)[1]
         };
     } else if (typeof window.JitsiMeetElectron !== 'undefined') {
         return {
@@ -101,11 +46,9 @@ function _detectNWJS() {
     const userAgent = navigator.userAgent;
 
     if (userAgent.match(/JitsiMeetNW/)) {
-        const version = userAgent.match(/JitsiMeetNW\/([\d.]+)/)[1];
-
         return {
             name: NWJS,
-            version
+            version: userAgent.match(/JitsiMeetNW\/([\d.]+)/)[1]
         };
     }
 }
@@ -141,6 +84,26 @@ function _detectReactNative() {
 }
 
 /**
+ * Returns the Jitsi recognized name for the engine
+ * 
+ * @param {string} engine - The engine name got by the parser
+ * @returns 
+ */
+function _getJitsiEngineName(engine) {
+    return engine in SUPPORTED_ENGINES ? SUPPORTED_ENGINES[engine] : undefined
+}
+
+/**
+ * Returns the Jitsi recognized name for the browser
+ * 
+ * @param {string} browser - The browser name got by the parser
+ * @returns 
+ */
+function _getJitsiBrowserName(browser) {
+    return browser in PARSER_TO_JITSI_NAME ? PARSER_TO_JITSI_NAME[browser] : UNKNOWN
+}
+
+/**
  * Returns information about the current browser.
  * @param {Object} - The parser instance.
  * @returns {Object} - The name and version of the browser.
@@ -161,29 +124,14 @@ function _detect(parser) {
         }
     }
 
-    const { name, version } = parser.getBrowser();
-
-    if (name in parserNameToJitsiName) {
-        return {
-            name: parserNameToJitsiName[name],
-            version
-        };
-    }
-
-    // Detect other browsers with the Chrome engine, such as Vivaldi and Brave.
-    browserInfo = _detectChromiumBased();
-    if (browserInfo) {
-        return browserInfo;
-    }
-
-    browserInfo = _detectWebKitBased(parser);
-    if (browserInfo) {
-        return browserInfo;
-    }
+    const { name: parserName, version } = parser.getBrowser();
+    const engine = _getJitsiEngineName(parser.getEngine().name);
+    const name = _getJitsiBrowserName(parserName);
 
     return {
-        name: UNKNOWN,
-        version: undefined
+        name,
+        version,
+        engine
     };
 }
 
@@ -199,7 +147,7 @@ export default class BrowserDetection {
      * @param {string} browserInfo.version - The version of the browser.
      */
     constructor(browserInfo) {
-        let name, version;
+        let name, version, engine;
 
         this._parser = new UAParser(navigator.userAgent);
         if (typeof browserInfo === 'undefined') {
@@ -207,16 +155,17 @@ export default class BrowserDetection {
 
             name = detectedBrowserInfo.name;
             version = detectedBrowserInfo.version;
-        } else if (browserInfo.name in parserNameToJitsiName) {
-            name = parserNameToJitsiName[browserInfo.name];
-            version = browserInfo.version;
+            engine = detectedBrowserInfo.engine;
+  
         } else {
-            name = UNKNOWN;
-            version = undefined;
+            name = _getJitsiBrowserName(browserInfo.name);
+            version = browserInfo.version;
+            engine = _getJitsiEngineName(browserInfo.engine.name);
         }
 
         this._name = name;
         this._version = version;
+        this._engine = engine;
     }
 
     /**
@@ -268,14 +217,6 @@ export default class BrowserDetection {
     }
 
     /**
-     * Checks if current browser is based on webkit.
-     * @returns {boolean}
-     */
-    isWebKit() {
-        return this._name === WEBKIT;
-    }
-
-    /**
      * Checks if current environment is NWJS.
      * @returns {boolean}
      */
@@ -300,11 +241,40 @@ export default class BrowserDetection {
     }
 
     /**
+     * Checks if current browser is based on chromium.
+     * @returns {boolean}
+     */
+    isChromiumBased() {
+        return this._engine === BLINK;
+    }
+
+    /**
+     * Checks if current browser is based on webkit.
+     * @returns {boolean}
+     */
+    isWebKitBased() {
+        // https://trac.webkit.org/changeset/236144/webkit/trunk/LayoutTests/webrtc/video-addLegacyTransceiver.html
+        return this._engine === WEBKIT
+            && typeof navigator.mediaDevices !== 'undefined'
+            && typeof navigator.mediaDevices.getUserMedia !== 'undefined'
+            && typeof window.RTCRtpTransceiver !== 'undefined'
+            // eslint-disable-next-line no-undef
+            && Object.keys(RTCRtpTransceiver.prototype).indexOf('currentDirection') > -1
+    }
+
+    /**
      * Returns the version of the current browser.
      * @returns {string}
      */
     getVersion() {
         return this._version;
+    }
+
+    /**
+     * Returns the operating system
+     */
+    getOS() {
+        return this._parser.getOS().name
     }
 
     /**
