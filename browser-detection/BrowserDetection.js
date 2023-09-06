@@ -12,7 +12,7 @@ import {
     REACT_NATIVE,
     UNKNOWN,
     PARSER_TO_JITSI_NAME,
-    SUPPORTED_ENGINES,
+    ENGINES,
     BLINK
 } from './constants.js';
 
@@ -27,7 +27,7 @@ function _detectElectron() {
     if (userAgent.match(/Electron/)) {
         return {
             name: ELECTRON,
-            version:  userAgent.match(/Electron(?:\s|\/)([\d.]+)/)[1]
+            version: userAgent.match(/Electron(?:\s|\/)([\d.]+)/)[1]
         };
     } else if (typeof window.JitsiMeetElectron !== 'undefined') {
         return {
@@ -85,22 +85,22 @@ function _detectReactNative() {
 
 /**
  * Returns the Jitsi recognized name for the engine
- * 
+ *
  * @param {string} engine - The engine name got by the parser
- * @returns 
+ * @returns
  */
 function _getJitsiEngineName(engine) {
-    return engine in SUPPORTED_ENGINES ? SUPPORTED_ENGINES[engine] : undefined
+    return engine in ENGINES ? ENGINES[engine] : undefined;
 }
 
 /**
  * Returns the Jitsi recognized name for the browser
- * 
+ *
  * @param {string} browser - The browser name got by the parser
- * @returns 
+ * @returns
  */
 function _getJitsiBrowserName(browser) {
-    return browser in PARSER_TO_JITSI_NAME ? PARSER_TO_JITSI_NAME[browser] : UNKNOWN
+    return browser in PARSER_TO_JITSI_NAME ? PARSER_TO_JITSI_NAME[browser] : UNKNOWN;
 }
 
 /**
@@ -130,7 +130,7 @@ function _detect(parser) {
 
     return {
         name,
-        version,
+        version: name === UNKNOWN ? undefined : version,
         engine
     };
 }
@@ -147,7 +147,7 @@ export default class BrowserDetection {
      * @param {string} browserInfo.version - The version of the browser.
      */
     constructor(browserInfo) {
-        let name, version, engine;
+        let engine, name, version;
 
         this._parser = new UAParser(navigator.userAgent);
         if (typeof browserInfo === 'undefined') {
@@ -156,10 +156,9 @@ export default class BrowserDetection {
             name = detectedBrowserInfo.name;
             version = detectedBrowserInfo.version;
             engine = detectedBrowserInfo.engine;
-  
         } else {
             name = _getJitsiBrowserName(browserInfo.name);
-            version = browserInfo.version;
+            version = name === UNKNOWN ? undefined : browserInfo.version;
             engine = _getJitsiEngineName(browserInfo.engine.name);
         }
 
@@ -259,7 +258,7 @@ export default class BrowserDetection {
             && typeof navigator.mediaDevices.getUserMedia !== 'undefined'
             && typeof window.RTCRtpTransceiver !== 'undefined'
             // eslint-disable-next-line no-undef
-            && Object.keys(RTCRtpTransceiver.prototype).indexOf('currentDirection') > -1
+            && Object.keys(RTCRtpTransceiver.prototype).indexOf('currentDirection') > -1;
     }
 
     /**
@@ -271,10 +270,17 @@ export default class BrowserDetection {
     }
 
     /**
-     * Returns the operating system
+     * Returns the operating system.
      */
     getOS() {
-        return this._parser.getOS().name
+        return this._parser.getOS().name;
+    }
+
+    /**
+     * Return the os version.
+     */
+    getOSVersion() {
+        return this._parser.getOS().version;
     }
 
     /**
