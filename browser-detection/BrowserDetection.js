@@ -256,40 +256,37 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {*} version - The version to compare with. Anything different
-     * than string will be converted to string.
+     * @param {number|string} version - The version to compare with. 
      * @returns {boolean|undefined} - Returns true if the current version is
      * greater than the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
      */
     isVersionGreaterThan(version) {
-        return this._parser.getBrowser().version >= version;
+        return parseInt(this._parser.getBrowser().version, 10) > parseInt(version, 10);
     }
 
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {*} version - The version to compare with. Anything different
-     * than string will be converted to string.
+     * @param {number|string} version - The version to compare with. 
      * @returns {boolean|undefined} - Returns true if the current version is
      * lower than the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
      */
     isVersionLessThan(version) {
-        return this._parser.getBrowser().version >= version;
+        return parseInt(this._parser.getBrowser().version, 10) < parseInt(version, 10);
     }
 
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {*} version - The version to compare with. Anything different
-     * than string will be converted to string.
+     * @param {number|string} version - The version to compare with. 
      * @returns {boolean|undefined} - Returns true if the current version is
      * equal to the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
      * A loose-equality operator is used here so that it matches the sub-versions as well.
      */
     isVersionEqualTo(version) {
-        return this._parser.getBrowser().version === version;
+        return parseInt(this._parser.getBrowser().version, 10) === parseInt(version, 10);
     }
 }
