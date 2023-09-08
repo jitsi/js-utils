@@ -4,11 +4,7 @@
 
 export const CHROME = 'chrome';
 
-export const OPERA = 'opera';
-
 export const FIREFOX = 'firefox';
-
-export const INTERNET_EXPLORER = 'iexplorer';
 
 export const SAFARI = 'safari';
 
@@ -27,17 +23,19 @@ export const UNKNOWN = 'unknown';
 export const PARSER_TO_JITSI_NAME = {
     'Chrome': CHROME,
     'Chromium': CHROME,
-    'Opera': OPERA,
     'Firefox': FIREFOX,
-    'Internet Explorer': INTERNET_EXPLORER,
-    'Safari': SAFARI
+    'Safari': SAFARI,
+    'Electron': ELECTRON,
 };
 
 export const BLINK = 'blink';
 
 export const WEBKIT = 'webkit';
 
+export const GECKO = 'gecko';
+
 export const ENGINES = {
     'Blink': BLINK,
-    'WebKit': WEBKIT
+    'WebKit': WEBKIT,
+    'Gecko': GECKO
 };

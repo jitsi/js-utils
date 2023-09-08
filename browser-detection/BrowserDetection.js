@@ -2,9 +2,7 @@ import { UAParser } from 'ua-parser-js';
 
 import {
     CHROME,
-    OPERA,
     FIREFOX,
-    INTERNET_EXPLORER,
     SAFARI,
     WEBKIT,
     NWJS,
@@ -15,27 +13,6 @@ import {
     ENGINES,
     BLINK
 } from './constants.js';
-
-/**
- * Detects Electron environment.
- *
- * @returns {Object|undefined} - The name (ELECTRON) and version.
- */
-function _detectElectron() {
-    const userAgent = navigator.userAgent;
-
-    if (userAgent.match(/Electron/)) {
-        return {
-            name: ELECTRON,
-            version: userAgent.match(/Electron(?:\s|\/)([\d.]+)/)[1]
-        };
-    } else if (typeof window.JitsiMeetElectron !== 'undefined') {
-        return {
-            name: ELECTRON,
-            version: undefined
-        };
-    }
-}
 
 /**
  * Detects NWJS environment.
@@ -90,7 +67,7 @@ function _detectReactNative() {
  * @returns
  */
 function _getJitsiEngineName(engine) {
-    return engine in ENGINES ? ENGINES[engine] : undefined;
+    return ENGINES[engine];
 }
 
 /**
@@ -100,7 +77,7 @@ function _getJitsiEngineName(engine) {
  * @returns
  */
 function _getJitsiBrowserName(browser) {
-    return browser in PARSER_TO_JITSI_NAME ? PARSER_TO_JITSI_NAME[browser] : UNKNOWN;
+    return PARSER_TO_JITSI_NAME[browser] ?? UNKNOWN;
 }
 
 /**
@@ -112,7 +89,6 @@ function _detect(parser) {
     let browserInfo;
     const detectors = [
         _detectReactNative,
-        _detectElectron,
         _detectNWJS
     ];
 
@@ -252,13 +228,7 @@ export default class BrowserDetection {
      * @returns {boolean}
      */
     isWebKitBased() {
-        // https://trac.webkit.org/changeset/236144/webkit/trunk/LayoutTests/webrtc/video-addLegacyTransceiver.html
-        return this._engine === WEBKIT
-            && typeof navigator.mediaDevices !== 'undefined'
-            && typeof navigator.mediaDevices.getUserMedia !== 'undefined'
-            && typeof window.RTCRtpTransceiver !== 'undefined'
-            // eslint-disable-next-line no-undef
-            && Object.keys(RTCRtpTransceiver.prototype).indexOf('currentDirection') > -1;
+        return this._engine === WEBKIT;
     }
 
     /**
