@@ -25,7 +25,7 @@ export const PARSER_TO_JITSI_NAME = {
     'Chromium': CHROME,
     'Firefox': FIREFOX,
     'Safari': SAFARI,
-    'Electron': ELECTRON,
+    'Electron': ELECTRON
 };
 
 export const BLINK = 'blink';
