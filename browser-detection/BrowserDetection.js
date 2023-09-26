@@ -5,7 +5,6 @@ import {
     FIREFOX,
     SAFARI,
     WEBKIT,
-    NWJS,
     ELECTRON,
     REACT_NATIVE,
     UNKNOWN,
@@ -13,22 +12,6 @@ import {
     ENGINES,
     BLINK
 } from './constants.js';
-
-/**
- * Detects NWJS environment.
- *
- * @returns {Object|undefined} - The name (NWJS) and version.
- */
-function _detectNWJS() {
-    const userAgent = navigator.userAgent;
-
-    if (userAgent.match(/JitsiMeetNW/)) {
-        return {
-            name: NWJS,
-            version: userAgent.match(/JitsiMeetNW\/([\d.]+)/)[1]
-        };
-    }
-}
 
 /**
  * Detects React Native environment.
@@ -86,28 +69,22 @@ function _getJitsiBrowserName(browser) {
  * @returns {Object} - The name and version of the browser.
  */
 function _detect(parser) {
-    let browserInfo;
-    const detectors = [
-        _detectReactNative,
-        _detectNWJS
-    ];
+    const reactNativeInfo = _detectReactNative()
 
-    // Try all browser detectors
-    for (let i = 0; i < detectors.length; i++) {
-        browserInfo = detectors[i]();
-        if (browserInfo) {
-            return browserInfo;
-        }
+    if (reactNativeInfo) {
+        return reactNativeInfo;
     }
 
     const { name: parserName, version } = parser.getBrowser();
-    const engine = _getJitsiEngineName(parser.getEngine().name);
+    const { name: engineName, version: engineVersion } = parser.getEngine();
+    const engine = _getJitsiEngineName(engineName);
     const name = _getJitsiBrowserName(parserName);
 
     return {
         name,
         version: name === UNKNOWN ? undefined : version,
-        engine
+        engine,
+        engineVersion: engine ? engineVersion : undefined
     };
 }
 
@@ -123,24 +100,21 @@ export default class BrowserDetection {
      * @param {string} browserInfo.version - The version of the browser.
      */
     constructor(browserInfo) {
-        let engine, name, version;
-
         this._parser = new UAParser(navigator.userAgent);
         if (typeof browserInfo === 'undefined') {
             const detectedBrowserInfo = _detect(this._parser);
 
-            name = detectedBrowserInfo.name;
-            version = detectedBrowserInfo.version;
-            engine = detectedBrowserInfo.engine;
-        } else {
-            name = _getJitsiBrowserName(browserInfo.name);
-            version = name === UNKNOWN ? undefined : browserInfo.version;
-            engine = _getJitsiEngineName(browserInfo.engine.name);
-        }
+            this._name = detectedBrowserInfo.name;
+            this._version = detectedBrowserInfo.version;
+            this._engine = detectedBrowserInfo.engine;
+            this._engineVersion = detectedBrowserInfo.engineVersion;
 
-        this._name = name;
-        this._version = version;
-        this._engine = engine;
+        } else {
+            this._name = _getJitsiBrowserName(browserInfo.name);
+            this._version = this._name === UNKNOWN ? undefined : browserInfo.version;
+            this._engine = _getJitsiEngineName(browserInfo.engine.name);
+            this._engineVersion = this._engine ? browserInfo.engine.version : undefined
+        }
     }
 
     /**
@@ -160,14 +134,6 @@ export default class BrowserDetection {
     }
 
     /**
-     * Checks if current browser is Opera.
-     * @returns {boolean}
-     */
-    isOpera() {
-        return this._name === OPERA;
-    }
-
-    /**
      * Checks if current browser is Firefox.
      * @returns {boolean}
      */
@@ -176,27 +142,11 @@ export default class BrowserDetection {
     }
 
     /**
-     * Checks if current browser is Internet Explorer.
-     * @returns {boolean}
-     */
-    isIExplorer() {
-        return this._name === INTERNET_EXPLORER;
-    }
-
-    /**
      * Checks if current browser is Safari.
      * @returns {boolean}
      */
     isSafari() {
         return this._name === SAFARI;
-    }
-
-    /**
-     * Checks if current environment is NWJS.
-     * @returns {boolean}
-     */
-    isNWJS() {
-        return this._name === NWJS;
     }
 
     /**
@@ -240,6 +190,14 @@ export default class BrowserDetection {
     }
 
     /**
+     * 
+     * @returns the engine version
+     */
+    getEngineVersion() {
+        return this._engineVersion;
+    }
+
+    /**
      * Returns the operating system.
      */
     getOS() {
@@ -262,7 +220,9 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionGreaterThan(version) {
-        return parseInt(this._parser.getBrowser().version, 10) > parseInt(version, 10);
+        if (this._version) {
+            return parseInt(this._version, 10) > parseInt(version, 10);
+        }
     }
 
     /**
@@ -274,7 +234,9 @@ export default class BrowserDetection {
      * the current browser version is unknown.
      */
     isVersionLessThan(version) {
-        return parseInt(this._parser.getBrowser().version, 10) < parseInt(version, 10);
+        if (this._version) {
+            return parseInt(this._version, 10) < parseInt(version, 10);
+        }
     }
 
     /**
@@ -287,6 +249,51 @@ export default class BrowserDetection {
      * A loose-equality operator is used here so that it matches the sub-versions as well.
      */
     isVersionEqualTo(version) {
-        return parseInt(this._parser.getBrowser().version, 10) === parseInt(version, 10);
+        if (this._version) {
+            return parseInt(this._version, 10) === parseInt(version, 10);
+        } 
+    }
+
+    /**
+     * Compares the passed version with the current engine version.
+     *
+     * @param {number|string} version - The version to compare with. 
+     * @returns {boolean|undefined} - Returns true if the current version is
+     * greater than the passed version and false otherwise. Returns undefined if
+     * the current engine version is unknown.
+     */
+    isEngineVersionGreaterThan(version) {
+        if (this._engineVersion) {
+            return parseInt(this._engineVersion, 10) > parseInt(version, 10);
+        }
+    }
+
+    /**
+     * Compares the passed version with the current engine version.
+     *
+     * @param {number|string} version - The version to compare with. 
+     * @returns {boolean|undefined} - Returns true if the current version is
+     * lower than the passed version and false otherwise. Returns undefined if
+     * the current engine version is unknown.
+     */
+    isEngineVersionLessThan(version) {
+        if (this._engineVersion) {
+            return parseInt(this._engineVersion, 10) < parseInt(version, 10);
+        }
+    }
+
+    /**
+     * Compares the passed version with the current engine version.
+     *
+     * @param {number|string} version - The version to compare with. 
+     * @returns {boolean|undefined} - Returns true if the current version is
+     * equal to the passed version and false otherwise. Returns undefined if
+     * the current engine version is unknown.
+     * A loose-equality operator is used here so that it matches the sub-versions as well.
+     */
+    isEngineVersionEqualTo(version) {
+        if (this._engineVersion) {
+            return parseInt(this._engineVersion, 10) === parseInt(version, 10);
+        }
     }
 }

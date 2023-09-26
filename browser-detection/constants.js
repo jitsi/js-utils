@@ -8,8 +8,6 @@ export const FIREFOX = 'firefox';
 
 export const SAFARI = 'safari';
 
-export const NWJS = 'nwjs';
-
 export const ELECTRON = 'electron';
 
 export const REACT_NATIVE = 'react-native';
