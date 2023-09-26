@@ -1,16 +1,16 @@
 import { UAParser } from 'ua-parser-js';
 
 import {
+    BLINK,
     CHROME,
-    FIREFOX,
-    SAFARI,
-    WEBKIT,
     ELECTRON,
-    REACT_NATIVE,
-    UNKNOWN,
-    PARSER_TO_JITSI_NAME,
     ENGINES,
-    BLINK
+    FIREFOX,
+    PARSER_TO_JITSI_NAME,
+    REACT_NATIVE,
+    SAFARI,
+    UNKNOWN,
+    WEBKIT
 } from './constants.js';
 
 /**
@@ -69,7 +69,7 @@ function _getJitsiBrowserName(browser) {
  * @returns {Object} - The name and version of the browser.
  */
 function _detect(parser) {
-    const reactNativeInfo = _detectReactNative()
+    const reactNativeInfo = _detectReactNative();
 
     if (reactNativeInfo) {
         return reactNativeInfo;
@@ -113,7 +113,7 @@ export default class BrowserDetection {
             this._name = _getJitsiBrowserName(browserInfo.name);
             this._version = this._name === UNKNOWN ? undefined : browserInfo.version;
             this._engine = _getJitsiEngineName(browserInfo.engine.name);
-            this._engineVersion = this._engine ? browserInfo.engine.version : undefined
+            this._engineVersion = this._engine ? browserInfo.engine.version : undefined;
         }
     }
 
@@ -190,7 +190,7 @@ export default class BrowserDetection {
     }
 
     /**
-     * 
+     *
      * @returns the engine version
      */
     getEngineVersion() {
@@ -214,7 +214,7 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {number|string} version - The version to compare with. 
+     * @param {number|string} version - The version to compare with.
      * @returns {boolean|undefined} - Returns true if the current version is
      * greater than the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
@@ -228,7 +228,7 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {number|string} version - The version to compare with. 
+     * @param {number|string} version - The version to compare with.
      * @returns {boolean|undefined} - Returns true if the current version is
      * lower than the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
@@ -242,7 +242,7 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current browser version.
      *
-     * @param {number|string} version - The version to compare with. 
+     * @param {number|string} version - The version to compare with.
      * @returns {boolean|undefined} - Returns true if the current version is
      * equal to the passed version and false otherwise. Returns undefined if
      * the current browser version is unknown.
@@ -251,13 +251,13 @@ export default class BrowserDetection {
     isVersionEqualTo(version) {
         if (this._version) {
             return parseInt(this._version, 10) === parseInt(version, 10);
-        } 
+        }
     }
 
     /**
      * Compares the passed version with the current engine version.
      *
-     * @param {number|string} version - The version to compare with. 
+     * @param {number|string} version - The version to compare with.
      * @returns {boolean|undefined} - Returns true if the current version is
      * greater than the passed version and false otherwise. Returns undefined if
      * the current engine version is unknown.
@@ -271,7 +271,7 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current engine version.
      *
-     * @param {number|string} version - The version to compare with. 
+     * @param {number|string} version - The version to compare with.
      * @returns {boolean|undefined} - Returns true if the current version is
      * lower than the passed version and false otherwise. Returns undefined if
      * the current engine version is unknown.
@@ -285,7 +285,7 @@ export default class BrowserDetection {
     /**
      * Compares the passed version with the current engine version.
      *
-     * @param {number|string} version - The version to compare with. 
+     * @param {number|string} version - The version to compare with.
      * @returns {boolean|undefined} - Returns true if the current version is
      * equal to the passed version and false otherwise. Returns undefined if
      * the current engine version is unknown.
