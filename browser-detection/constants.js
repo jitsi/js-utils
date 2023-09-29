@@ -12,10 +12,6 @@ export const ELECTRON = 'electron';
 
 export const REACT_NATIVE = 'react-native';
 
-export const CHROMIUM = 'chromium';
-
-export const UNKNOWN = 'unknown';
-
 export const WEBKIT_BROWSER = 'webkit-browser';
 
 /**
@@ -24,7 +20,6 @@ export const WEBKIT_BROWSER = 'webkit-browser';
  */
 export const PARSER_TO_JITSI_NAME = {
     'Chrome': CHROME,
-    'Chromium': CHROMIUM,
     'Firefox': FIREFOX,
     'Safari': SAFARI,
     'Electron': ELECTRON

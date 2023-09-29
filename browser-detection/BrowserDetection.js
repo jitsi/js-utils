@@ -3,16 +3,13 @@ import { UAParser } from 'ua-parser-js';
 import {
     BLINK,
     CHROME,
-    CHROMIUM,
     ELECTRON,
     ENGINES,
-    FIREFOX,
+    GECKO,
     PARSER_TO_JITSI_NAME,
     REACT_NATIVE,
     SAFARI,
-    UNKNOWN,
-    WEBKIT,
-    WEBKIT_BROWSER
+    WEBKIT
 } from './constants.js';
 
 /**
@@ -58,30 +55,12 @@ function _detectReactNative() {
  * @returns
  */
 function _getJitsiBrowserInfo(browserInfo) {
-    const browser = {
+    return {
         name: PARSER_TO_JITSI_NAME[browserInfo.name],
         version: browserInfo.version,
         engine: ENGINES[browserInfo.engine],
         engineVersion: browserInfo.engineVersion
     };
-
-    if (!browser.name) {
-        // detect chromium browsers
-        if (browser.engine === BLINK) {
-            browser.name = CHROMIUM;
-            browser.version = browser.engineVersion;
-
-        // detect webkit browsers
-        } else if (browser.engine === WEBKIT) {
-            browser.name = WEBKIT_BROWSER;
-        } else {
-            return {
-                name: UNKNOWN
-            };
-        }
-    }
-
-    return browser;
 }
 
 /**
@@ -142,7 +121,8 @@ export default class BrowserDetection {
      * @returns {boolean}
      */
     isChrome() {
-        return this._name === CHROME;
+        // for backward compatibility returns true for all Chromium browsers
+        return this._name === CHROME || this._engine === BLINK;
     }
 
     /**
@@ -150,7 +130,7 @@ export default class BrowserDetection {
      * @returns {boolean}
      */
     isFirefox() {
-        return this._name === FIREFOX;
+        return this._engine === GECKO;
     }
 
     /**
@@ -198,7 +178,11 @@ export default class BrowserDetection {
      * @returns {string}
      */
     getName() {
-        return this._name;
+        if (this._name) {
+            return this._name;
+        }
+
+        return this._parser.getBrowser().name;
     }
 
     /**
@@ -206,7 +190,11 @@ export default class BrowserDetection {
      * @returns {string}
      */
     getVersion() {
-        return this._version;
+        if (this._version) {
+            return this._version;
+        }
+
+        return this._parser.getBrowser().version;
     }
 
     /**
