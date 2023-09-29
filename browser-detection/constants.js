@@ -12,7 +12,7 @@ export const ELECTRON = 'electron';
 
 export const REACT_NATIVE = 'react-native';
 
-export const UNKNOWN = 'unknown';
+export const WEBKIT_BROWSER = 'webkit-browser';
 
 /**
  * Maps the names of the browsers from ua-parser to the internal names defined in
@@ -20,7 +20,6 @@ export const UNKNOWN = 'unknown';
  */
 export const PARSER_TO_JITSI_NAME = {
     'Chrome': CHROME,
-    'Chromium': CHROME,
     'Firefox': FIREFOX,
     'Safari': SAFARI,
     'Electron': ELECTRON

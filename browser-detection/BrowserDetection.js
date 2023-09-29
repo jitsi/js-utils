@@ -5,11 +5,10 @@ import {
     CHROME,
     ELECTRON,
     ENGINES,
-    FIREFOX,
+    GECKO,
     PARSER_TO_JITSI_NAME,
     REACT_NATIVE,
     SAFARI,
-    UNKNOWN,
     WEBKIT
 } from './constants.js';
 
@@ -44,23 +43,24 @@ function _detectReactNative() {
 }
 
 /**
- * Returns the Jitsi recognized name for the engine
- *
- * @param {string} engine - The engine name got by the parser
- * @returns
- */
-function _getJitsiEngineName(engine) {
-    return ENGINES[engine];
-}
-
-/**
  * Returns the Jitsi recognized name for the browser
  *
- * @param {string} browser - The browser name got by the parser
+ * @param {Object} [browserInfo] - Information about the browser.
+ * @param {string} browserInfo.name - The name of the browser.
+ * @param {string} browserInfo.version - The version of the browser.
+ * @param {string} browserInfo.engine - The engine of the browser.
+ * @param {string} browserInfo.engineVersion - The version of the engine of the browser.
+ * @param {string} browserInfo.os - The os of the browser.
+ * @param {string} browserInfo.osVersion - The os version of the browser.
  * @returns
  */
-function _getJitsiBrowserName(browser) {
-    return PARSER_TO_JITSI_NAME[browser] ?? UNKNOWN;
+function _getJitsiBrowserInfo(browserInfo) {
+    return {
+        name: PARSER_TO_JITSI_NAME[browserInfo.name],
+        version: browserInfo.version,
+        engine: ENGINES[browserInfo.engine],
+        engineVersion: browserInfo.engineVersion
+    };
 }
 
 /**
@@ -75,17 +75,14 @@ function _detect(parser) {
         return reactNativeInfo;
     }
 
-    const { name: parserName, version } = parser.getBrowser();
-    const { name: engineName, version: engineVersion } = parser.getEngine();
-    const engine = _getJitsiEngineName(engineName);
-    const name = _getJitsiBrowserName(parserName);
+    const { name, version } = parser.getBrowser();
+    const { name: engine, version: engineVersion } = parser.getEngine();
 
-    return {
+    return _getJitsiBrowserInfo({
         name,
-        version: name === UNKNOWN ? undefined : version,
+        version,
         engine,
-        engineVersion: engine ? engineVersion : undefined
-    };
+        engineVersion });
 }
 
 /**
@@ -98,31 +95,25 @@ export default class BrowserDetection {
      * @param {Object} [browserInfo] - Information about the browser.
      * @param {string} browserInfo.name - The name of the browser.
      * @param {string} browserInfo.version - The version of the browser.
+     * @param {string} browserInfo.engine - The engine of the browser.
+     * @param {string} browserInfo.engineVersion - The version of the engine of the browser.
+     * @param {string} browserInfo.os - The os of the browser.
+     * @param {string} browserInfo.osVersion - The os version of the browser.
      */
     constructor(browserInfo) {
         this._parser = new UAParser(navigator.userAgent);
-        if (typeof browserInfo === 'undefined') {
-            const detectedBrowserInfo = _detect(this._parser);
 
-            this._name = detectedBrowserInfo.name;
-            this._version = detectedBrowserInfo.version;
-            this._engine = detectedBrowserInfo.engine;
-            this._engineVersion = detectedBrowserInfo.engineVersion;
+        const {
+            name,
+            version,
+            engine,
+            engineVersion
+        } = browserInfo ? _getJitsiBrowserInfo(browserInfo) : _detect(this._parser);
 
-        } else {
-            this._name = _getJitsiBrowserName(browserInfo.name);
-            this._version = this._name === UNKNOWN ? undefined : browserInfo.version;
-            this._engine = _getJitsiEngineName(browserInfo.engine.name);
-            this._engineVersion = this._engine ? browserInfo.engine.version : undefined;
-        }
-    }
-
-    /**
-     * Gets current browser name.
-     * @returns {string}
-     */
-    getName() {
-        return this._name;
+        this._name = name;
+        this._version = version;
+        this._engine = engine;
+        this._engineVersion = engineVersion;
     }
 
     /**
@@ -130,7 +121,8 @@ export default class BrowserDetection {
      * @returns {boolean}
      */
     isChrome() {
-        return this._name === CHROME;
+        // for backward compatibility returns true for all Chromium browsers
+        return this._name === CHROME || this._engine === BLINK;
     }
 
     /**
@@ -138,7 +130,7 @@ export default class BrowserDetection {
      * @returns {boolean}
      */
     isFirefox() {
-        return this._name === FIREFOX;
+        return this._engine === GECKO;
     }
 
     /**
@@ -182,15 +174,39 @@ export default class BrowserDetection {
     }
 
     /**
+     * Gets current browser name.
+     * @returns {string}
+     */
+    getName() {
+        if (this._name) {
+            return this._name;
+        }
+
+        return this._parser.getBrowser().name;
+    }
+
+    /**
      * Returns the version of the current browser.
      * @returns {string}
      */
     getVersion() {
-        return this._version;
+        if (this._version) {
+            return this._version;
+        }
+
+        return this._parser.getBrowser().version;
     }
 
     /**
-     *
+     * Gets current engine name of the browser.
+     * @returns {string}
+     */
+    getEngine() {
+        return this._engine;
+    }
+
+    /**
+     * Returns the engine version of the current browser.
      * @returns the engine version
      */
     getEngineVersion() {
