@@ -237,85 +237,83 @@ export default class BrowserDetection {
      * Compares the passed version with the current browser version.
      *
      * @param {number} version - The version to compare with.
-     * @returns {boolean|undefined} - Returns true if the current version is
-     * greater than the passed version and false otherwise. Returns undefined if
-     * the current browser version is unknown.
+     * @returns {boolean} - Returns true if the current version is greater than the passed version and false otherwise.
      */
-    isVersionGreaterThan(version: number): boolean | undefined {
+    isVersionGreaterThan(version: number): boolean {
         if (this._version) {
             return parseInt(this._version, 10) > version;
         }
+
+        return false
     }
 
     /**
      * Compares the passed version with the current browser version.
      *
      * @param {number} version - The version to compare with.
-     * @returns {boolean|undefined} - Returns true if the current version is
-     * lower than the passed version and false otherwise. Returns undefined if
-     * the current browser version is unknown.
+     * @returns {boolean} - Returns true if the current version is lower than the passed version and false otherwise.
      */
-    isVersionLessThan(version: number): boolean | undefined {
+    isVersionLessThan(version: number): boolean {
         if (this._version) {
             return parseInt(this._version, 10) < version;
         }
+
+        return false;
     }
 
     /**
      * Compares the passed version with the current browser version.
      *
      * @param {number} version - The version to compare with.
-     * @returns {boolean|undefined} - Returns true if the current version is
-     * equal to the passed version and false otherwise. Returns undefined if
-     * the current browser version is unknown.
-     * A loose-equality operator is used here so that it matches the sub-versions as well.
+     * @returns {boolean} - Returns true if the current version is equal to the passed version and false otherwise.
      */
-    isVersionEqualTo(version: number): boolean | undefined {
+    isVersionEqualTo(version: number): boolean {
         if (this._version) {
             return parseInt(this._version, 10) === version;
         }
+
+        return false;
     }
 
     /**
      * Compares the passed version with the current engine version.
      *
      * @param {number} version - The version to compare with.
-     * @returns {boolean|undefined} - Returns true if the current version is
-     * greater than the passed version and false otherwise. Returns undefined if
-     * the current engine version is unknown.
+     * @returns {boolean} - Returns true if the current version is greater than the passed version and false otherwise.
      */
-    isEngineVersionGreaterThan(version: number): boolean | undefined {
+    isEngineVersionGreaterThan(version: number): boolean {
         if (this._engineVersion) {
             return parseInt(this._engineVersion, 10) > version;
         }
+
+        return false;
     }
 
     /**
      * Compares the passed version with the current engine version.
      *
      * @param {number} version - The version to compare with.
-     * @returns {boolean|undefined} - Returns true if the current version is
-     * lower than the passed version and false otherwise. Returns undefined if
-     * the current engine version is unknown.
+     * @returns {boolean} - Returns true if the current version is lower than the passed version and false otherwise.
      */
-    isEngineVersionLessThan(version: number): boolean | undefined {
+    isEngineVersionLessThan(version: number): boolean {
         if (this._engineVersion) {
             return parseInt(this._engineVersion, 10) < version;
         }
+
+        return false;
     }
 
     /**
      * Compares the passed version with the current engine version.
      *
      * @param {number} version - The version to compare with.
-     * @returns {boolean|undefined} - Returns true if the current version is
-     * equal to the passed version and false otherwise. Returns undefined if
-     * the current engine version is unknown.
-     * A loose-equality operator is used here so that it matches the sub-versions as well.
+     * @returns {boolean} - Returns true if the current version is equal to the passed version and false otherwise.
      */
-    isEngineVersionEqualTo(version: number): boolean | undefined {
+    isEngineVersionEqualTo(version: number): boolean {
         if (this._engineVersion) {
             return parseInt(this._engineVersion, 10) === version;
         }
+
+        return false;
     }
 }

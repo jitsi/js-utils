@@ -1,8 +1,4 @@
 
-// TODO: Maybe fix the values to 'Chrome', 'Internet Explorer', etc. Currently
-// these values need to be as they are because they are going to analytics,
-// callstats, etc.
-
 export enum Browser {
     CHROME = 'chrome',
     FIREFOX = 'firefox',
