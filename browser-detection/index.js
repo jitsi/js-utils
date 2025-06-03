@@ -1,3 +1,3 @@
-export { default as BrowserDetection } from './BrowserDetection.js';
-import * as browsers from './constants.js';
+export { default as BrowserDetection } from './BrowserDetection.ts';
+import * as browsers from './constants.ts';
 export { browsers };
