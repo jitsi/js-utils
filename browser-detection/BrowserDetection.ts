@@ -58,7 +58,7 @@ function _getJitsiBrowserInfo(browserInfo: IBrowserInfo): IBrowserInfo {
     return {
         name: PARSER_TO_JITSI_NAME[name],
         version,
-        engine: ENGINES[engine],
+        engine: engine ? ENGINES[engine] : undefined,
         engineVersion: engineVersion
     };
 }
