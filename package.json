@@ -24,10 +24,11 @@
     "@types/ua-parser-js": "0.7.39",
     "eslint": "8.50.0",
     "eslint-plugin-import": "2.28.1",
-    "typescript": "^5.8.3"
+    "typescript": "5.8.3"
   },
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "tsc --project tsconfig.json"
   },
   "pre-commit": [
     "lint",
@@ -35,5 +36,8 @@
   ],
   "type": "module",
   "main": "./index.js",
+  "files": [
+    "dist/index.d.ts"
+  ],
   "license": "Apache-2.0"
 }
