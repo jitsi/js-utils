@@ -9,7 +9,8 @@
         "strict": true
     },
     "include": [
-        "./browser-detection/BrowserDetection.ts"
+        "./browser-detection/BrowserDetection.ts",
+        "json.ts"
     ],
     "exclude": [
         "node_modules",
