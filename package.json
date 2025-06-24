@@ -36,8 +36,5 @@
   ],
   "type": "module",
   "main": "./index.js",
-  "files": [
-    "dist/*"
-  ],
   "license": "Apache-2.0"
 }
