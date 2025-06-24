@@ -37,7 +37,7 @@
   "type": "module",
   "main": "./index.js",
   "files": [
-    "dist/index.d.ts"
+    "dist/*"
   ],
   "license": "Apache-2.0"
 }
