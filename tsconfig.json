@@ -2,7 +2,7 @@
     "compilerOptions": {
         "declaration": true, // Generate .d.ts files
         "emitDeclarationOnly": true, // Emit only .d.ts files (optional for type generation)
-        "outDir": "./dist", // Output directory for compiled files and declarations
+        "outDir": "./types", // Output directory for compiled files and declarations
         "moduleResolution": "node",
         "target": "ES6",
         "module": "ES6",
