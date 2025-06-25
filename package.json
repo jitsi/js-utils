@@ -1,6 +1,6 @@
 {
   "name": "@jitsi/js-utils",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Utilities for Jitsi JS projects",
   "repository": {
     "type": "git",
@@ -28,7 +28,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "build": "tsc --project tsconfig.json"
+    "build": "tsc --project tsconfig.json",
+    "prepack": "npm run build"
   },
   "pre-commit": [
     "lint",
@@ -37,7 +38,14 @@
   "type": "module",
   "main": "./index.js",
   "files": [
-    "dist/index.d.ts"
+    "index.js",
+    "avatar/",
+    "browser-detection/",
+    "dist/",
+    "jitsi-local-storage/",
+    "random/",
+    "transport/",
+    "uri/"
   ],
   "license": "Apache-2.0"
 }
