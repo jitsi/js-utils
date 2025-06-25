@@ -37,7 +37,14 @@
   "type": "module",
   "main": "./index.js",
   "files": [
-    "dist/index.d.ts"
+    "index.js",
+    "avatar/",
+    "browser-detection/",
+    "dist/",
+    "jitsi-local-storage/",
+    "random/",
+    "transport/",
+    "uri/"
   ],
   "license": "Apache-2.0"
 }
