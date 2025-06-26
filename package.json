@@ -28,8 +28,9 @@
   },
   "scripts": {
     "lint": "eslint .",
+    "build": "tsc --project tsconfig.json",
     "gen-types": "tsc --declaration --emitDeclarationOnly --outFile types/index.d.ts",
-    "prepack": "npm run gen-types"
+    "prepack": "npm run build && npm run gen-types"
   },
   "pre-commit": [
     "lint",
