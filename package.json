@@ -40,6 +40,7 @@
     "browser-detection/",
     "json.ts",
     "jitsi-local-storage/",
+    "polyfills/",
     "random/",
     "transport/",
     "types/",
