@@ -32,10 +32,6 @@
     "gen-types": "tsc --declaration --emitDeclarationOnly --outFile types/index.d.ts",
     "prepack": "npm run build && npm run gen-types"
   },
-  "pre-commit": [
-    "lint",
-    "test"
-  ],
   "type": "module",
   "main": "./index.js",
   "files": [
