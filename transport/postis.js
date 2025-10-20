@@ -1,11 +1,11 @@
 /* eslint-disable */
 
-import { safeJsonParse } from '../json.js';
+import { safeJsonParse } from '../json.ts';
 
 // Originally: https://github.com/adtile/postis
 //
 // The MIT License
-// 
+//
 // Copyright (c) 2015-2015 Adtile Technologies Inc. http://www.adtile.me
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
