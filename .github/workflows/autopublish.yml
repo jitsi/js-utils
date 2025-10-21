@@ -4,25 +4,74 @@ on:
   push:
     branches:
       - "master"
+  pull_request:
+    types: [closed]
+    branches:
+      - "master"
 
 jobs:
-  auto-publish:
-    name: "AutoPublish on master"
+  version-bump:
+    name: "Create version bump PR"
     runs-on: ubuntu-latest
+    concurrency:
+      group: version-bump
+      cancel-in-progress: false
+    # Only run for direct pushes to master, not for merged PRs
+    if: github.event_name == 'push' && !contains(github.event.head_commit.message, 'version bump')
 
     steps:
       - name: "Checkout source code"
         uses: "actions/checkout@v3"
-      - name: "Automated Release"
+        with:
+          ref: master
+
+      - name: "Create or update version bump branch"
+        run: |
+          BRANCH_NAME="version-bump"
+          # Delete branch if it exists (from previous run)
+          git push origin --delete "$BRANCH_NAME" 2>/dev/null || true
+          git checkout -b "$BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: "Automated version bump"
         uses: "phips28/gh-action-bump-version@master"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Create and auto-merge PR"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --title "ci: version bump to $(node -p "require('./package.json').version")" \
+            --body "Automated version bump by GitHub Actions" \
+            --base master \
+            --head "$BRANCH_NAME"
+
+          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[0].number')
+          gh pr merge "$PR_NUMBER" --auto --merge
+
+  publish:
+    name: "Publish to npm"
+    runs-on: ubuntu-latest
+    # Only run when version-bump PR is merged
+    if: github.event_name == 'pull_request' &&
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.head.ref == 'version-bump'
+
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v3"
+
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
           registry-url: 'https://registry.npmjs.org'
+
       - name: "Install dependencies"
         run: npm install
-      - run: npm publish --access public
+
+      - name: "Publish to npm"
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
