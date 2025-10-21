@@ -29,8 +29,7 @@
   "scripts": {
     "lint": "eslint .",
     "build": "tsc --project tsconfig.json",
-    "gen-types": "tsc --declaration --emitDeclarationOnly --outFile types/index.d.ts",
-    "prepack": "npm run build && npm run gen-types"
+    "prepack": "npm run build"
   },
   "type": "module",
   "main": "./index.js",
@@ -38,12 +37,12 @@
     "index.js",
     "avatar/",
     "browser-detection/",
-    "json.ts",
+    "json.js",
+    "json.d.ts",
     "jitsi-local-storage/",
     "polyfills/",
     "random/",
     "transport/",
-    "types/",
     "uri/"
   ],
   "license": "Apache-2.0"

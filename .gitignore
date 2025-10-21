@@ -11,3 +11,13 @@ node_modules/
 npm-debug.log
 yarn-error.log
 types
+
+# Compiled TypeScript files
+/index.js
+/index.d.ts
+/json.js
+/json.d.ts
+/browser-detection/*.js
+/browser-detection/*.d.ts
+/polyfills/*.js
+/polyfills/*.d.ts

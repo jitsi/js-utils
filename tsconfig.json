@@ -1,16 +1,17 @@
 {
     "compilerOptions": {
         "declaration": true, // Generate .d.ts files
-        "emitDeclarationOnly": true, // Emit only .d.ts files (optional for type generation)
-        "outDir": "./types", // Output directory for compiled files and declarations
-        "moduleResolution": "node",
-        "target": "ES6",
-        "module": "ES6",
+        "emitDeclarationOnly": false, // Emit both .js and .d.ts files
+        "outDir": "./", // Output directory - emit .js files alongside .ts files
+        "moduleResolution": "bundler", // Use bundler resolution for extension-less imports
+        "target": "ES2019", // Target ES2019 for modern, efficient output that works in all target browsers
+        "module": "ES2020", // ES2020 modules for better tree-shaking and dynamic imports
         "strict": true
     },
     "include": [
-        "./browser-detection/*.ts",
-        "./polyfills/*.ts",
+        "./browser-detection/**/*.ts",
+        "./polyfills/**/*.ts",
+        "index.ts",
         "json.ts"
     ],
     "exclude": [
@@ -20,7 +21,6 @@
         "test",
         "**/*.spec.ts",
         "**/*.spec.js",
-        "*.conf*.js",
-        "index.js"
+        "*.conf*.js"
     ]
 }
