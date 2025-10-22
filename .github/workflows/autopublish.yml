@@ -35,6 +35,8 @@ jobs:
 
       - name: "Automated version bump"
         uses: "phips28/gh-action-bump-version@master"
+        with:
+          target-branch: 'version-bump'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -42,13 +44,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          NEW_VERSION=$(node -p "require('./package.json').version")
+
           gh pr create \
-            --title "ci: version bump to $(node -p "require('./package.json').version")" \
+            --title "ci: version bump to $NEW_VERSION" \
             --body "Automated version bump by GitHub Actions" \
             --base master \
-            --head "$BRANCH_NAME"
+            --head version-bump
 
-          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[0].number')
+          PR_NUMBER=$(gh pr list --head version-bump --json number --jq '.[0].number')
           gh pr merge "$PR_NUMBER" --auto --merge
 
   publish:
