@@ -36,11 +36,13 @@
   "files": [
     "index.js",
     "avatar/",
-    "browser-detection/",
+    "browser-detection/*.js",
+    "browser-detection/*.d.ts",
     "json.js",
     "json.d.ts",
     "jitsi-local-storage/",
-    "polyfills/",
+    "polyfills/*.js",
+    "polyfills/*.d.ts",
     "random/",
     "transport/",
     "uri/"
