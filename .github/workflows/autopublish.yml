@@ -9,6 +9,7 @@ jobs:
   auto-publish:
     name: "AutoPublish on master"
     runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, 'chore: bump version to')"
 
     steps:
       - name: "Generate GitHub App token"
@@ -23,6 +24,8 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
       - name: "Automated Release"
         uses: "phips28/gh-action-bump-version@master"
+        with:
+          commit-message: 'chore: bump version to {{version}}'
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       - uses: actions/setup-node@v3
