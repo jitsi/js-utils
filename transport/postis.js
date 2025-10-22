@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { safeJsonParse } from '../json.ts';
+import { safeJsonParse } from '../json';
 
 // Originally: https://github.com/adtile/postis
 //
