@@ -31,7 +31,6 @@
     "build": "tsc --project tsconfig.json",
     "prepack": "npm run build"
   },
-  "type": "module",
   "main": "./index.js",
   "files": [
     "index.js",
