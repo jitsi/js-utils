@@ -1,11 +1,19 @@
-import Postis from './postis.js';
+import Postis, { PostisOptions } from './postis';
+import type { ITransportBackend } from './types';
+
+/**
+ * Options for PostMessageITransportBackend.
+ */
+export interface IPostMessageTransportBackendOptions {
+    postisOptions?: Partial<PostisOptions>;
+}
 
 /**
  * The default options for postis.
  *
  * @type {Object}
  */
-const DEFAULT_POSTIS_OPTIONS = {
+const DEFAULT_POSTIS_OPTIONS: Partial<PostisOptions> = {
     window: window.opener || window.parent
 };
 
@@ -14,33 +22,42 @@ const DEFAULT_POSTIS_OPTIONS = {
  *
  * @type {string}
  */
-const POSTIS_METHOD_NAME = 'message';
+const POSTIS_METHOD_NAME = 'message' as const;
 
 /**
  * Implements message transport using the postMessage API.
  */
-export default class PostMessageTransportBackend {
+export default class PostMessageITransportBackend implements ITransportBackend {
     /**
-     * Creates new PostMessageTransportBackend instance.
+     * The postis instance for communication.
+     */
+    private postis: Postis;
+
+    /**
+     * Callback function for receiving messages.
+     */
+    private _receiveCallback: (message: any) => void;
+
+    /**
+     * Creates new PostMessageITransportBackend instance.
      *
      * @param {Object} options - Optional parameters for configuration of the
      * transport.
      */
-    constructor({ postisOptions } = {}) {
-        // eslint-disable-next-line new-cap
-        this.postis = Postis({
+    constructor({ postisOptions }: IPostMessageTransportBackendOptions = {}) {
+        this.postis = new Postis({
             ...DEFAULT_POSTIS_OPTIONS,
             ...postisOptions
-        });
+        } as PostisOptions);
 
         this._receiveCallback = () => {
             // Do nothing until a callback is set by the consumer of
-            // PostMessageTransportBackend via setReceiveCallback.
+            // PostMessageITransportBackend via setReceiveCallback.
         };
 
         this.postis.listen(
             POSTIS_METHOD_NAME,
-            message => this._receiveCallback(message));
+            (message: any) => this._receiveCallback(message));
     }
 
     /**
@@ -48,7 +65,7 @@ export default class PostMessageTransportBackend {
      *
      * @returns {void}
      */
-    dispose() {
+    dispose(): void {
         this.postis.destroy();
     }
 
@@ -58,7 +75,7 @@ export default class PostMessageTransportBackend {
      * @param {Object} message - The message to be sent.
      * @returns {void}
      */
-    send(message) {
+    send(message: any): void {
         this.postis.send({
             method: POSTIS_METHOD_NAME,
             params: message
@@ -71,7 +88,7 @@ export default class PostMessageTransportBackend {
      * @param {Function} callback - The new callback.
      * @returns {void}
      */
-    setReceiveCallback(callback) {
+    setReceiveCallback(callback: (message: any) => void): void {
         this._receiveCallback = callback;
     }
 }

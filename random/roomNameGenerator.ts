@@ -1,4 +1,4 @@
-import { randomElement } from './randomUtil.js';
+import { randomElement } from './randomUtil';
 
 /*
 const _NOUN_ = [
@@ -9,7 +9,7 @@ const _NOUN_ = [
  * The list of plural nouns.
  * @const
  */
-const _PLURALNOUN_ = [
+const _PLURALNOUN_: readonly string[] = [
     'Abilities', 'Absences', 'Abundances', 'Academics',
     'Academies', 'Accents', 'Acceptances', 'Accesses', 'Accidents',
     'Accommodations', 'Accomplishments', 'Accordances', 'Accountabilities',
@@ -544,7 +544,7 @@ const _PLACE_ = [
  * The list of verbs.
  * @const
  */
-const _VERB_ = [
+const _VERB_: readonly string[] = [
     'Abolish', 'Absorb', 'Accelerate', 'Accept',
     'Access', 'Accommodate', 'Accompany', 'Accomplish', 'Account',
     'Accumulate', 'Accuse', 'Achieve', 'Acknowledge', 'Acquire', 'Act',
@@ -731,7 +731,7 @@ const _VERB_ = [
  * The list of adverbs.
  * @const
  */
-const _ADVERB_ = [
+const _ADVERB_: readonly string[] = [
     'About', 'Above', 'Abroad', 'Absently', 'Absolutely', 'Accidentally',
     'Accordingly', 'Accurately', 'Accusingly', 'Across', 'Actually',
     'Additionally', 'Adequately', 'Adorably', 'After', 'Afterwards',
@@ -819,7 +819,7 @@ const _ADVERB_ = [
  * The list of adjectives.
  * @const
  */
-const _ADJECTIVE_ = [
+const _ADJECTIVE_: readonly string[] = [
     'Able', 'Absent', 'Absolute', 'Abstract', 'Absurd', 'Academic',
     'Acceptable', 'Accessible', 'Accountable', 'Accurate', 'Acid', 'Active',
     'Actual', 'Acute', 'Additional', 'Adequate', 'Adjacent',
@@ -1017,7 +1017,7 @@ const _CONJUNCTION_ = [
  * Maps a string (category name) to the array of words from that category.
  * @const
  */
-const CATEGORIES = {
+const CATEGORIES: Record<string, readonly string[]> = {
     _ADJECTIVE_,
     _ADVERB_,
     _PLURALNOUN_,
@@ -1033,7 +1033,7 @@ const CATEGORIES = {
  * The list of room name patterns.
  * @const
  */
-const PATTERNS = [
+const PATTERNS: readonly string[] = [
     '_ADJECTIVE__PLURALNOUN__VERB__ADVERB_'
 
     // BeautifulFungiOrSpaghetti
@@ -1070,7 +1070,7 @@ const PATTERNS = [
  *
  * @returns {string} A newly-generated room name.
  */
-export function generateRoomWithoutSeparator() {
+export function generateRoomWithoutSeparator(): string {
     // XXX Note that if more than one pattern is available, the choice of 'name'
     // won't have a uniform distribution amongst all patterns (names from
     // patterns with fewer options will have higher probability of being chosen
@@ -1097,7 +1097,7 @@ export function generateRoomWithoutSeparator() {
  * @returns {boolean} True if the specified string contains at least one of the
  * templates/categories; otherwise, false.
  */
-function _hasTemplate(s) {
+function _hasTemplate(s: string): boolean {
     for (const template in CATEGORIES) {
         if (s.indexOf(template) >= 0) {
             return true;

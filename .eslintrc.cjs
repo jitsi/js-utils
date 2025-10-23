@@ -1,9 +1,9 @@
 module.exports = {
-    'extends': [
+    extends: [
         '@jitsi/eslint-config'
     ],
-    parserOptions: {
-        parser: '@babel/eslint-parser',
-        requireConfigFile: false,
-    }
+    parser: '@typescript-eslint/parser',
+    plugins: [
+        '@typescript-eslint'
+    ]
 };

@@ -2,16 +2,16 @@ import { UAParser } from 'ua-parser-js';
 
 import {
     Browser,
-    Engine,
     ENGINES,
-    PARSER_TO_JITSI_NAME,  
+    Engine,
+    PARSER_TO_JITSI_NAME,
 } from './constants';
 
 interface IBrowserInfo {
-    name: string;
-    version: string;
     engine?: string;
     engineVersion?: string;
+    name: string;
+    version: string;
 }
 
 /**
@@ -26,6 +26,7 @@ function _detectReactNative(): IBrowserInfo | undefined {
     // always return some version even if we can't get the real one.
     if (match || navigator.product === 'ReactNative') {
         let name: string = Browser.REACT_NATIVE;
+
         version = 'unknown';
 
         if (match && match.length > 2) {
@@ -53,7 +54,7 @@ function _detectReactNative(): IBrowserInfo | undefined {
  * @returns
  */
 function _getJitsiBrowserInfo(browserInfo: IBrowserInfo): IBrowserInfo {
-    const { engine, engineVersion, name, version} = browserInfo;
+    const { engine, engineVersion, name, version } = browserInfo;
 
     return {
         name: PARSER_TO_JITSI_NAME[name],
@@ -244,7 +245,7 @@ export default class BrowserDetection {
             return parseInt(this._version, 10) > version;
         }
 
-        return false
+        return false;
     }
 
     /**
