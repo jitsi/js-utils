@@ -1,0 +1,20 @@
+# Generated files
+*.js
+*.d.ts
+
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+types/
+
+# Documentation
+doc/
+docs/
+
+# Test files
+*.spec.ts
+*.spec.js
+*.test.ts
+*.test.js

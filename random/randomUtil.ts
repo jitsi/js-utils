@@ -2,8 +2,7 @@
  * Alphanumeric characters.
  * @const
  */
-const ALPHANUM
-    = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const ALPHANUM = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 /**
  * Hexadecimal digit characters.
@@ -18,7 +17,7 @@ const HEX_DIGITS = '0123456789abcdef';
  * @returns {string} A string of random alphanumeric characters with the
  * specified length.
  */
-export function randomAlphanumString(length) {
+export function randomAlphanumString(length: number): string {
     return _randomString(length, ALPHANUM);
 }
 
@@ -28,7 +27,9 @@ export function randomAlphanumString(length) {
  * @param {Array|string} arr - Source.
  * @returns {Array|string} Array element or string character.
  */
-export function randomElement(arr) {
+export function randomElement<T>(arr: readonly T[]): T;
+export function randomElement(arr: string): string;
+export function randomElement<T>(arr: readonly T[] | string): T | string {
     return arr[randomInt(0, arr.length - 1)];
 }
 
@@ -37,7 +38,7 @@ export function randomElement(arr) {
  *
  * @returns {Array|string}
  */
-export function randomHexDigit() {
+export function randomHexDigit(): string {
     return randomElement(HEX_DIGITS);
 }
 
@@ -48,7 +49,7 @@ export function randomHexDigit() {
  * @returns {string} A string of random hexadecimal digits with the specified
  * length.
  */
-export function randomHexString(length) {
+export function randomHexString(length: number): string {
     return _randomString(length, HEX_DIGITS);
 }
 
@@ -59,7 +60,7 @@ export function randomHexString(length) {
  * @param {number} max - The maximum value for the generated number.
  * @returns {number} Random int number.
  */
-export function randomInt(min, max) {
+export function randomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -72,7 +73,7 @@ export function randomInt(min, max) {
  * @private
  * @returns {string} A string of random characters with the specified length.
  */
-function _randomString(length, characters) {
+function _randomString(length: number, characters: string): string {
     let result = '';
 
     for (let i = 0; i < length; ++i) {

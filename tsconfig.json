@@ -9,10 +9,7 @@
         "strict": true
     },
     "include": [
-        "./browser-detection/**/*.ts",
-        "./polyfills/**/*.ts",
-        "index.ts",
-        "json.ts"
+        "./**/*.ts"
     ],
     "exclude": [
         "node_modules",

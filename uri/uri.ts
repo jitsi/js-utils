@@ -1,4 +1,60 @@
 /**
+ * URL-like object interface matching browser Location/URL.
+ */
+export interface IURLLike {
+    hash?: string;
+    host?: string;
+    hostname?: string;
+    pathname: string;
+    port?: string;
+    protocol?: string;
+    search?: string;
+    toString?: () => string;
+}
+
+/**
+ * Jitsi URI object with room information.
+ */
+export interface IJitsiURIObject extends IURLLike {
+    contextRoot?: string;
+    room?: string;
+}
+
+/**
+ * Configuration overrides for Jitsi Meet.
+ * Supports various naming conventions (base, Overwrite, Override) for config, interfaceConfig, and devices.
+ */
+export interface IURLOverrides {
+    config?: Record<string, any>;
+    configOverride?: Record<string, any>;
+    configOverwrite?: Record<string, any>;
+    devices?: Record<string, any>;
+    devicesOverride?: Record<string, any>;
+    devicesOverwrite?: Record<string, any>;
+    interfaceConfig?: Record<string, any>;
+    interfaceConfigOverride?: Record<string, any>;
+    interfaceConfigOverwrite?: Record<string, any>;
+}
+
+/**
+ * URL builder options for constructing Jitsi Meet URLs.
+ * Used to build URLs from various input formats.
+ */
+export interface IURLBuilderOptions extends IURLOverrides {
+    appLinkScheme?: string;
+    domain?: string;
+    host?: string;
+    hostname?: string;
+    jwt?: string;
+    protocol?: string;
+    room?: string;
+    roomName?: string;
+    scheme?: string;
+    serverURL?: string;
+    url?: string;
+}
+
+/**
  * A list of characters to be excluded/removed from the room component/segment
  * of a conference/meeting URI/URL. The list is based on RFC 3986 and the jxmpp
  * library utilized by jicofo.
@@ -41,10 +97,8 @@ export const URI_PROTOCOL_PATTERN = '^([a-z][a-z0-9\\.\\+-]*:)';
  * @private
  * @returns {?string}
  */
-function _fixRoom(room) {
-    return room
-        ? room.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '')
-        : room;
+function _fixRoom(room?: string): string | undefined {
+    return room?.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '');
 }
 
 /**
@@ -60,7 +114,7 @@ function _fixRoom(room) {
  * @private
  * @returns {string}
  */
-function _fixURIStringScheme(uri) {
+function _fixURIStringScheme(uri: string): string {
     const regex = new RegExp(`${URI_PROTOCOL_PATTERN}+`, 'gi');
     const match = regex.exec(uri);
 
@@ -97,7 +151,7 @@ function _fixURIStringScheme(uri) {
  * @returns {string} - The (Web application) context root defined by the
  * specified {@code location} (URI).
  */
-export function getLocationContextRoot({ pathname }) {
+export function getLocationContextRoot({ pathname }: { pathname: string; }): string {
     const contextRootEndIndex = pathname.lastIndexOf('/');
 
     return (
@@ -115,8 +169,8 @@ export function getLocationContextRoot({ pathname }) {
  * @returns {Array<string>} The {@code Array} with URL parameter {@code String}s
  * constructed out of the specified {@code obj}.
  */
-function _objectToURLParamsArray(obj = {}) {
-    const params = [];
+function _objectToURLParamsArray(obj: Record<string, any> = {}): string[] {
+    const params: string[] = [];
 
     for (const key in obj) { // eslint-disable-line guard-for-in
         try {
@@ -147,11 +201,12 @@ function _objectToURLParamsArray(obj = {}) {
  *     search: string
  * }}
  */
-export function parseStandardURIString(str) {
+export function parseStandardURIString(str: string): IURLLike {
     /* eslint-disable no-param-reassign */
 
-    const obj = {
-        toString: _standardURIToString
+    const obj: IURLLike = {
+        toString: _standardURIToString,
+        pathname: ''
     };
 
     let regex;
@@ -258,21 +313,21 @@ export function parseStandardURIString(str) {
  *     search: string
  * }}
  */
-export function parseURIString(uri) {
+export function parseURIString(uri?: string): IJitsiURIObject | undefined {
     if (typeof uri !== 'string') {
         return undefined;
     }
 
-    const obj = parseStandardURIString(_fixURIStringScheme(uri));
+    const standardUri = parseStandardURIString(_fixURIStringScheme(uri));
 
     // Add the properties that are specific to a Jitsi Meet resource (location)
     // such as contextRoot, room:
 
     // contextRoot
-    obj.contextRoot = getLocationContextRoot(obj);
+    const contextRoot = getLocationContextRoot(standardUri);
 
     // The room (name) is the last component/segment of pathname.
-    const { pathname } = obj;
+    let { pathname } = standardUri;
 
     // XXX While the components/segments of pathname are URI encoded, Jitsi Meet
     // on the client and/or server sides still don't support certain characters.
@@ -287,13 +342,16 @@ export function parseURIString(uri) {
 
             // XXX Drive fixedRoom into pathname (because room is derived from
             // pathname).
-            obj.pathname
-                = pathname.substring(0, contextRootEndIndex + 1) + (room || '');
+            pathname = pathname.substring(0, contextRootEndIndex + 1) + (room || '');
         }
     }
-    obj.room = room;
 
-    return obj;
+    return {
+        ...standardUri,
+        contextRoot,
+        pathname,
+        room
+    };
 }
 
 /**
@@ -305,7 +363,7 @@ export function parseURIString(uri) {
  * function is invoked on such an instance.
  * @returns {string}
  */
-function _standardURIToString(thiz) {
+function _standardURIToString(this: IURLLike, thiz?: IURLLike): string {
     // eslint-disable-next-line no-invalid-this
     const { hash, host, pathname, protocol, search } = thiz || this;
     let str = '';
@@ -330,12 +388,12 @@ function _standardURIToString(thiz) {
  * the one accepted by the constructor of Web's ExternalAPI is supported on both
  * mobile/React Native and Web/React.
  *
- * @param {Object|string} obj - The URL to return a {@code String}
+ * @param {IURLBuilderOptions | URL | string} [obj] - The URL to return a {@code String}
  * representation of.
- * @returns {string} - A {@code String} representation of the specified
+ * @returns {string | undefined} A {@code String} representation of the specified
  * {@code obj} which is supposed to represent a URL.
  */
-export function toURLString(obj) {
+export function toURLString(obj?: IURLBuilderOptions | URL | string): string | undefined {
     let str;
 
     switch (typeof obj) {
@@ -362,14 +420,13 @@ export function toURLString(obj) {
  * {@code Object} similar to the one accepted by the constructor
  * of Web's ExternalAPI.
  *
- * @param {Object} o - The URL to return a {@code String} representation of.
- * @returns {string} - A {@code String} representation of the specified
- * {@code Object}.
+ * @param {IURLBuilderOptions} o - The URL to return a {@code String} representation of.
+ * @returns {string} A {@code String} representation of the specified {@code Object}.
  */
-export function urlObjectToString(o) {
+export function urlObjectToString(o: IURLBuilderOptions): string {
     // First normalize the given url. It come as o.url or split into o.serverURL
     // and o.room.
-    let tmp;
+    let tmp: string;
 
     if (o.serverURL && o.room) {
         tmp = new URL(o.room, o.serverURL).toString();
@@ -430,9 +487,9 @@ export function urlObjectToString(o) {
     const room = o.roomName || o.room;
 
     if (room
-            && (url.pathname.endsWith('/')
-                || !url.pathname.endsWith(`/${room}`))) {
-        pathname.endsWith('/') || (pathname += '/');
+            && (url.pathname?.endsWith('/')
+                || !url.pathname?.endsWith(`/${room}`))) {
+        pathname?.endsWith('/') || (pathname += '/');
         pathname += room;
     }
 
@@ -444,7 +501,7 @@ export function urlObjectToString(o) {
     const { jwt } = o;
 
     if (jwt) {
-        let { search } = url;
+        let { search = '' } = url;
 
         if (search.indexOf('?jwt=') === -1 && search.indexOf('&jwt=') === -1) {
             search.startsWith('?') || (search = `?${search}`);
@@ -457,14 +514,14 @@ export function urlObjectToString(o) {
 
     // fragment/hash
 
-    let { hash } = url;
+    let { hash = '' } = url;
 
-    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices' ]) {
+    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices' ] as const) {
         const urlParamsArray
             = _objectToURLParamsArray(
-                o[`${urlPrefix}Overwrite`]
-                    || o[urlPrefix]
-                    || o[`${urlPrefix}Override`]);
+                o[`${urlPrefix}Overwrite` as keyof IURLOverrides]
+                    || o[urlPrefix as keyof IURLOverrides]
+                    || o[`${urlPrefix}Override` as keyof IURLOverrides]);
 
         if (urlParamsArray.length) {
             let urlParamsString
@@ -481,5 +538,5 @@ export function urlObjectToString(o) {
 
     url.hash = hash;
 
-    return url.toString() || undefined;
+    return url.toString?.() || '';
 }

@@ -1,10 +1,10 @@
 
 export enum Browser {
     CHROME = 'chrome',
-    FIREFOX = 'firefox',
-    SAFARI = 'safari',
     ELECTRON = 'electron',
+    FIREFOX = 'firefox',
     REACT_NATIVE = 'react-native',
+    SAFARI = 'safari',
     WEBKIT_BROWSER = 'webkit-browser'
 }
 
@@ -12,7 +12,7 @@ export enum Browser {
  * Maps the names of the browsers from ua-parser to the internal names defined in
  * ./browsers.js
  */
-export const PARSER_TO_JITSI_NAME: { [key: string]: Browser } = {
+export const PARSER_TO_JITSI_NAME: { [key: string]: Browser; } = {
     'Chrome': Browser.CHROME,
     'Firefox': Browser.FIREFOX,
     'Safari': Browser.SAFARI,
@@ -21,11 +21,11 @@ export const PARSER_TO_JITSI_NAME: { [key: string]: Browser } = {
 
 export enum Engine {
     BLINK = 'blink',
-    WEBKIT = 'webkit',
-    GECKO = 'gecko'
+    GECKO = 'gecko',
+    WEBKIT = 'webkit'
 }
 
-export const ENGINES: { [key: string]: Engine } = {
+export const ENGINES: { [key: string]: Engine; } = {
     'Blink': Engine.BLINK,
     'WebKit': Engine.WEBKIT,
     'Gecko': Engine.GECKO

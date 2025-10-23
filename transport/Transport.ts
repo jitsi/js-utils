@@ -1,57 +1,59 @@
-import {
-    MESSAGE_TYPE_EVENT,
-    MESSAGE_TYPE_REQUEST,
-    MESSAGE_TYPE_RESPONSE
-} from './constants.js';
+import { MessageType } from './constants';
+import type {
+    ITransportBackend,
+    ITransportMessage,
+    ITransportOptions,
+    TransportListener
+} from './types';
 
 /**
-* Stores the currnet transport backend that have to be used. Also implements
-* request/response mechanism.
-*/
+ * Stores the current transport backend that has to be used. Also implements
+ * request/response mechanism.
+ */
 export default class Transport {
+    /**
+     * Maps an event name and listeners that have been added to the Transport instance.
+     */
+    private _listeners: Map<string, Set<TransportListener>>;
+
+    /**
+     * The request ID counter used for the id property of the request. This
+     * property is used to match the responses with the request.
+     */
+    private _requestID: number;
+
+    /**
+     * Maps IDs of the requests and handlers that will process the responses of those requests.
+     */
+    private _responseHandlers: Map<number, (message: ITransportMessage) => void>;
+
+    /**
+     * A set with the events and requests that were received but not
+     * processed by any listener. They are later passed on every new
+     * listener until they are processed.
+     */
+    private _unprocessedMessages: Set<any[]>;
+
+    /**
+     * The transport backend.
+     */
+    private _backend?: ITransportBackend | null;
+
+    /**
+     * Alias for on method.
+     */
+    public addListener: typeof Transport.prototype.on;
+
     /**
      * Creates new instance.
      *
-     * @param {Object} options - Optional parameters for configuration of the
-     * transport backend.
+     * @param {ITransportOptions} options - Optional parameters for configuration of the transport backend.
      */
-    constructor({ backend } = {}) {
-        /**
-         * Maps an event name and listener that have been added to the Transport
-         * instance.
-         *
-         * @type {Map<string, Function>}
-         */
+    constructor({ backend }: ITransportOptions = {}) {
         this._listeners = new Map();
-
-        /**
-         * The request ID counter used for the id property of the request. This
-         * property is used to match the responses with the request.
-         *
-         * @type {number}
-         */
         this._requestID = 0;
-
-        /**
-         * Maps an IDs of the requests and handlers that will process the
-         * responses of those requests.
-         *
-         * @type {Map<number, Function>}
-         */
         this._responseHandlers = new Map();
-
-        /**
-         * A set with the events and requests that were received but not
-         * processed by any listener. They are later passed on every new
-         * listener until they are processed.
-         *
-         * @type {Set<Object>}
-         */
         this._unprocessedMessages = new Set();
-
-        /**
-         * Alias.
-         */
         this.addListener = this.on;
 
         if (backend) {
@@ -61,10 +63,8 @@ export default class Transport {
 
     /**
      * Disposes the current transport backend.
-     *
-     * @returns {void}
      */
-    _disposeBackend() {
+    private _disposeBackend(): void {
         if (this._backend) {
             this._backend.dispose();
             this._backend = null;
@@ -74,21 +74,21 @@ export default class Transport {
     /**
      * Handles incoming messages from the transport backend.
      *
-     * @param {Object} message - The message.
+     * @param {ITransportMessage} message - The message.
      * @returns {void}
      */
-    _onMessageReceived(message) {
-        if (message.type === MESSAGE_TYPE_RESPONSE) {
-            const handler = this._responseHandlers.get(message.id);
+    private _onMessageReceived(message: ITransportMessage): void {
+        if (message.type === MessageType.RESPONSE) {
+            const handler = this._responseHandlers.get(message.id!);
 
             if (handler) {
                 handler(message);
-                this._responseHandlers.delete(message.id);
+                this._responseHandlers.delete(message.id!);
             }
-        } else if (message.type === MESSAGE_TYPE_REQUEST) {
-            this.emit('request', message.data, (result, error) => {
-                this._backend.send({
-                    type: MESSAGE_TYPE_RESPONSE,
+        } else if (message.type === MessageType.REQUEST) {
+            this.emit('request', message.data, (result: any, error?: any) => {
+                this._backend!.send({
+                    type: MessageType.RESPONSE,
                     error,
                     id: message.id,
                     result
@@ -104,7 +104,7 @@ export default class Transport {
      *
      * @returns {void}
      */
-    dispose() {
+    dispose(): void {
         this._responseHandlers.clear();
         this._unprocessedMessages.clear();
         this.removeAllListeners();
@@ -115,15 +115,15 @@ export default class Transport {
      * Calls each of the listeners registered for the event named eventName, in
      * the order they were registered, passing the supplied arguments to each.
      *
-     * @param {string} eventName -  The name of the event.
-     * @returns {boolean} True if the event has been processed by any listener,
-     * false otherwise.
+     * @param {string} eventName - The name of the event.
+     * @param {...any} args - Arguments to pass to the listeners.
+     * @returns {boolean} True if the event has been processed by any listener, false otherwise.
      */
-    emit(eventName, ...args) {
+    emit(eventName: string, ...args: any[]): boolean {
         const listenersForEvent = this._listeners.get(eventName);
         let isProcessed = false;
 
-        if (listenersForEvent && listenersForEvent.size) {
+        if (listenersForEvent?.size) {
             listenersForEvent.forEach(listener => {
                 isProcessed = listener(...args) || isProcessed;
             });
@@ -140,12 +140,11 @@ export default class Transport {
      * Adds the listener function to the listeners collection for the event
      * named eventName.
      *
-     * @param {string} eventName -  The name of the event.
-     * @param {Function} listener - The listener that will be added.
-     * @returns {Transport} References to the instance of Transport class, so
-     * that calls can be chained.
+     * @param {string} eventName - The name of the event.
+     * @param {TransportListener} listener - The listener that will be added.
+     * @returns {Transport} References to the instance of Transport class, so that calls can be chained.
      */
-    on(eventName, listener) {
+    on(eventName: string, listener: TransportListener): this {
         let listenersForEvent = this._listeners.get(eventName);
 
         if (!listenersForEvent) {
@@ -167,12 +166,10 @@ export default class Transport {
     /**
      * Removes all listeners, or those of the specified eventName.
      *
-     * @param {string} [eventName] - The name of the event. If this parameter is
-     * not specified all listeners will be removed.
-     * @returns {Transport} References to the instance of Transport class, so
-     * that calls can be chained.
+     * @param {string} [eventName] - The name of the event. If this parameter is not specified all listeners will be removed.
+     * @returns {Transport} References to the instance of Transport class, so that calls can be chained.
      */
-    removeAllListeners(eventName) {
+    removeAllListeners(eventName?: string): this {
         if (eventName) {
             this._listeners.delete(eventName);
         } else {
@@ -186,12 +183,11 @@ export default class Transport {
      * Removes the listener function from the listeners collection for the event
      * named eventName.
      *
-     * @param {string} eventName -  The name of the event.
-     * @param {Function} listener - The listener that will be removed.
-     * @returns {Transport} References to the instance of Transport class, so
-     * that calls can be chained.
+     * @param {string} eventName - The name of the event.
+     * @param {TransportListener} listener - The listener that will be removed.
+     * @returns {Transport} References to the instance of Transport class, so that calls can be chained.
      */
-    removeListener(eventName, listener) {
+    removeListener(eventName: string, listener: TransportListener): this {
         const listenersForEvent = this._listeners.get(eventName);
 
         if (listenersForEvent) {
@@ -204,13 +200,13 @@ export default class Transport {
     /**
      * Sends the passed event.
      *
-     * @param {Object} event - The event to be sent.
+     * @param {Object} [event={}] - The event to be sent.
      * @returns {void}
      */
-    sendEvent(event = {}) {
+    sendEvent(event: any = {}): void {
         if (this._backend) {
             this._backend.send({
-                type: MESSAGE_TYPE_EVENT,
+                type: MessageType.EVENT,
                 data: event
             });
         }
@@ -220,9 +216,9 @@ export default class Transport {
      * Sending request.
      *
      * @param {Object} request - The request to be sent.
-     * @returns {Promise}
+     * @returns {Promise<any>} A promise that resolves with the response result or rejects with an error.
      */
-    sendRequest(request) {
+    sendRequest(request: any): Promise<any> {
         if (!this._backend) {
             return Promise.reject(new Error('No transport backend defined!'));
         }
@@ -232,7 +228,7 @@ export default class Transport {
         const id = this._requestID;
 
         return new Promise((resolve, reject) => {
-            this._responseHandlers.set(id, ({ error, result }) => {
+            this._responseHandlers.set(id, ({ error, result }: ITransportMessage) => {
                 if (typeof result !== 'undefined') {
                     resolve(result);
 
@@ -245,8 +241,8 @@ export default class Transport {
             });
 
             try {
-                this._backend.send({
-                    type: MESSAGE_TYPE_REQUEST,
+                this._backend!.send({
+                    type: MessageType.REQUEST,
                     data: request,
                     id
                 });
@@ -260,10 +256,10 @@ export default class Transport {
     /**
      * Changes the current backend transport.
      *
-     * @param {Object} backend - The new transport backend that will be used.
+     * @param {ITransportBackend} backend - The new transport backend that will be used.
      * @returns {void}
      */
-    setBackend(backend) {
+    setBackend(backend: ITransportBackend): void {
         this._disposeBackend();
 
         this._backend = backend;

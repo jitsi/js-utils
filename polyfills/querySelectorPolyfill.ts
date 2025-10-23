@@ -10,8 +10,8 @@ interface IAttributeCondition {
  * Represents the parsed components of a CSS selector.
  */
 interface IParsedSelector {
-    tagName: string | null;
     attrConditions: IAttributeCondition[];
+    tagName: string | null;
 }
 
 // Regex constants for efficient reuse across selector parsing.
