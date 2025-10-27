@@ -109,7 +109,7 @@ class JitsiLocalStorage extends EventEmitter {
     /**
      * Whether window.localStorage is disabled.
      */
-    private _localStorageDisabled: boolean;
+    private _localStorageDisabled: boolean = false;
 
     /**
      * Creates a new JitsiLocalStorage instance.
@@ -118,7 +118,6 @@ class JitsiLocalStorage extends EventEmitter {
         super();
 
         let storage: Storage | DummyLocalStorage | undefined;
-        const localStorageDisabled = false;
 
         try {
             storage = window.localStorage;
@@ -134,7 +133,6 @@ class JitsiLocalStorage extends EventEmitter {
         }
 
         this._storage = storage;
-        this._localStorageDisabled = localStorageDisabled;
     }
 
     /**
