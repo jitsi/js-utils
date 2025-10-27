@@ -6,7 +6,8 @@
         "moduleResolution": "bundler", // Use bundler resolution for extension-less imports
         "target": "ES2019", // Target ES2019 for modern, efficient output that works in all target browsers
         "module": "ES2020", // ES2020 modules for better tree-shaking and dynamic imports
-        "strict": true
+        "strict": true,
+        "types": ["chai", "node"] // Include Chai and Node.js type definitions for tests
     },
     "include": [
         "./**/*.ts"
