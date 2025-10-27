@@ -9,7 +9,7 @@ export interface IURLLike {
     port?: string;
     protocol?: string;
     search?: string;
-    toString?: () => string;
+    toString: () => string;
 }
 
 /**
@@ -538,5 +538,5 @@ export function urlObjectToString(o: IURLBuilderOptions): string {
 
     url.hash = hash;
 
-    return url.toString?.() || '';
+    return url.toString();
 }
