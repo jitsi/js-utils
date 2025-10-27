@@ -1,4 +1,7 @@
-import { EventEmitter } from 'events';
+// NOTE: The 'events' module is a devDependency (not a runtime dependency).
+// Consumers of this package are expected to provide 'events' via their bundler (e.g., webpack) or
+// environment (e.g., nodeJS). For tests only, we include 'events' in devDependencies.
+import EventEmitter from 'events';
 
 /**
  * Dummy implementation of Storage interface.
@@ -100,7 +103,7 @@ class DummyLocalStorage extends EventEmitter {
 /**
  * Wrapper class for browser's local storage object.
  */
-class JitsiLocalStorage extends EventEmitter {
+export class JitsiLocalStorage extends EventEmitter {
     /**
      * The storage backend (either window.localStorage or DummyLocalStorage).
      */

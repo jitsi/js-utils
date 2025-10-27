@@ -13,3 +13,7 @@ yarn-error.log
 
 # Build output directory
 dist/
+
+# Test coverage reports
+coverage/
+.nyc_output/
