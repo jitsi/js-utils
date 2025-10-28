@@ -10,8 +10,6 @@
 node_modules/
 npm-debug.log
 yarn-error.log
-types
 
-# Compiled TypeScript files (generated from .ts sources)
-*.js
-*.d.ts
+# Build output directory
+dist/

@@ -2,7 +2,7 @@
     "compilerOptions": {
         "declaration": true, // Generate .d.ts files
         "emitDeclarationOnly": false, // Emit both .js and .d.ts files
-        "outDir": "./", // Output directory - emit .js files alongside .ts files
+        "outDir": "./dist", // Output directory - emit files to dist directory
         "moduleResolution": "bundler", // Use bundler resolution for extension-less imports
         "target": "ES2019", // Target ES2019 for modern, efficient output that works in all target browsers
         "module": "ES2020", // ES2020 modules for better tree-shaking and dynamic imports
