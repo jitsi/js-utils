@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # Monitor GitHub Actions versions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci)"
+
+  # Monitor npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: "build(deps)"
+    # Group updates to reduce PR noise
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
