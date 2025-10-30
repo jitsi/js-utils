@@ -24,7 +24,7 @@
     "@rollup/plugin-commonjs": "^28.0.9",
     "@types/chai": "5.2.3",
     "@types/js-md5": "0.8.0",
-    "@types/node": "24.9.1",
+    "@types/node": "24.9.2",
     "@types/ua-parser-js": "0.7.39",
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
@@ -36,7 +36,7 @@
     "eslint-plugin-typescript-sort-keys": "3.3.0",
     "events": "3.3.0",
     "mocha": "11.7.4",
-    "typescript": "5.8.3"
+    "typescript": "5.9.3"
   },
   "scripts": {
     "lint": "eslint . --ext .ts",
