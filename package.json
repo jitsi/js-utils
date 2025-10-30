@@ -1,6 +1,6 @@
 {
   "name": "@jitsi/js-utils",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "Utilities for Jitsi JS projects",
   "repository": {
     "type": "git",
