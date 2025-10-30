@@ -82,7 +82,6 @@ export default {
     'polyfills/**/*.spec.ts',
     'random/**/*.spec.ts',
     'transport/**/*.spec.ts',
-    'uri/**/*.spec.ts',
     '*.spec.ts'
   ],
 
