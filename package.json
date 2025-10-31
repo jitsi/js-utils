@@ -21,7 +21,7 @@
   "devDependencies": {
     "@esm-bundle/chai": "4.3.4",
     "@jitsi/eslint-config": "6.0.4",
-    "@rollup/plugin-commonjs": "^28.0.9",
+    "@rollup/plugin-commonjs": "^29.0.0",
     "@types/chai": "5.2.3",
     "@types/js-md5": "0.8.0",
     "@types/node": "24.9.2",
