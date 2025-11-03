@@ -31,7 +31,7 @@
     "@web/dev-server-esbuild": "1.0.4",
     "@web/dev-server-rollup": "0.6.4",
     "@web/test-runner": "0.20.2",
-    "eslint": "8.57.1",
+    "eslint": "9.39.0",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-typescript-sort-keys": "3.3.0",
     "events": "3.3.0",
