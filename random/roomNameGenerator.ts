@@ -586,7 +586,7 @@ const _VERB_: readonly string[] = [
     'Contribute', 'Control', 'Convert', 'Convey', 'Convict', 'Convince',
     'Cook', 'Cool', 'Cooperate', 'Coordinate', 'Cope', 'Copy', 'Correct',
     'Correlate', 'Correspond', 'Cost', 'Count', 'Counter', 'Cover', 'Crack',
-    'Craft', 'Crash', 'Crawl', 'Create', 'Credit', 'Creep', 'Criticize',
+    'Craft', 'Crash', 'Crawl', 'Create', 'Credit', 'Criticize',
     'Cross', 'Cruise', 'Crush', 'Cry', 'Cultivate', 'Cure', 'Curve', 'Cut',
     'Cycle', 'Damage', 'Dance', 'Dare', 'Date', 'Deal', 'Debate', 'Decide',
     'Declare', 'Decline', 'Decorate', 'Decrease', 'Deem', 'Defeat',
