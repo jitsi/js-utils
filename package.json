@@ -26,8 +26,8 @@
     "@types/js-md5": "0.8.0",
     "@types/node": "24.9.2",
     "@types/ua-parser-js": "0.7.39",
-    "@typescript-eslint/eslint-plugin": "8.46.2",
-    "@typescript-eslint/parser": "8.46.2",
+    "@typescript-eslint/eslint-plugin": "8.54.0",
+    "@typescript-eslint/parser": "8.54.0",
     "@web/dev-server-esbuild": "1.0.4",
     "@web/dev-server-rollup": "0.6.4",
     "@web/test-runner": "0.20.2",
@@ -35,7 +35,7 @@
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-typescript-sort-keys": "3.3.0",
     "events": "3.3.0",
-    "mocha": "11.7.4",
+    "mocha": "11.7.5",
     "typescript": "5.9.3"
   },
   "scripts": {
