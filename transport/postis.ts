@@ -122,14 +122,14 @@ export default class Postis {
      * @returns {void}
      */
     private handleMessage(event: MessageEvent): void {
+        if (this.allowedOrigin && event.origin !== this.allowedOrigin) {
+            return;
+        }
+        
         let data: MessageData | null;
         try {
             data = safeJsonParse(event.data) as MessageData;
         } catch (e) {
-            return;
-        }
-
-        if (this.allowedOrigin && event.origin !== this.allowedOrigin) {
             return;
         }
 
