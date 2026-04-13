@@ -17,7 +17,7 @@ export interface ITransportBackend {
      * @param {any} message - The message to send.
      * @returns {void}
      */
-    send: (message: any) => void;
+    send: (message: any, transfer?: Array<any>) => void;
 
     /**
      * Sets the callback function to handle received messages.

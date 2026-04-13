@@ -86,13 +86,13 @@ export default class Transport {
                 this._responseHandlers.delete(message.id!);
             }
         } else if (message.type === MessageType.REQUEST) {
-            this.emit('request', message.data, (result: any, error?: any) => {
+            this.emit('request', message.data, (result: any, error?: any, transfer?: Array<any>) => {
                 this._backend!.send({
                     type: MessageType.RESPONSE,
                     error,
                     id: message.id,
                     result
-                });
+                }, transfer);
             });
         } else {
             this.emit('event', message.data);
@@ -201,14 +201,16 @@ export default class Transport {
      * Sends the passed event.
      *
      * @param {Object} [event={}] - The event to be sent.
+     * @param {Array<any>} [transfer] - An optional array of transferable objects (e.g., ArrayBuffer, MessagePort)
+     * to transfer ownership of to the remote side, rather than cloning them.
      * @returns {void}
      */
-    sendEvent(event: any = {}): void {
+    sendEvent(event: any = {}, transfer?: Array<any>): void {
         if (this._backend) {
             this._backend.send({
                 type: MessageType.EVENT,
                 data: event
-            });
+            }, transfer);
         }
     }
 
