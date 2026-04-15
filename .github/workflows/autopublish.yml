@@ -14,21 +14,21 @@ jobs:
     steps:
       - name: "Generate GitHub App token"
         id: app-token
-        uses: "actions/create-github-app-token@v2"
+        uses: "actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349"  # v2
         with:
           app-id: ${{ secrets.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - name: "Checkout source code"
-        uses: "actions/checkout@v5"
+        uses: "actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd"  # v5
         with:
           token: ${{ steps.app-token.outputs.token }}
       - name: "Automated Release"
-        uses: "phips28/gh-action-bump-version@master"
+        uses: "phips28/gh-action-bump-version@215e27a882516826c59df7f09da8c67d5f375cbd"  # master
         with:
           commit-message: 'chore: bump version to {{version}}'
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f  # v6
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
