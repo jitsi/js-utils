@@ -86,7 +86,7 @@ export default class Transport {
                 this._responseHandlers.delete(message.id!);
             }
         } else if (message.type === MessageType.REQUEST) {
-            this.emit('request', message.data, (result: any, error?: any, transfer?: Array<any>) => {
+            this.emit('request', message.data, (result: any, error?: any, transfer?: Transferable[]) => {
                 this._backend!.send({
                     type: MessageType.RESPONSE,
                     error,
@@ -205,7 +205,7 @@ export default class Transport {
      * to transfer ownership of to the remote side, rather than cloning them.
      * @returns {void}
      */
-    sendEvent(event: any = {}, transfer?: Array<any>): void {
+    sendEvent(event: any = {}, transfer?: Transferable[]): void {
         if (this._backend) {
             this._backend.send({
                 type: MessageType.EVENT,

@@ -7,6 +7,9 @@ export interface IMessageChannelTransportBackendOptions {
 
     /**
      * The origin to use for postMessage calls and origin checks.
+     * When not provided, the wildcard origin ('*') is used for the initial port transfer,
+     * which means any origin can receive the port. For production use with cross-origin
+     * iframes, always specify the expected origin to prevent port interception.
      */
     origin?: string;
 
@@ -31,7 +34,37 @@ export interface IMessageChannelTransportBackendOptions {
 }
 
 /**
- * Implements message transport using the postMessage API.
+ * Pending message entry for buffering messages before the port is established.
+ */
+interface IPendingMessage {
+
+    /**
+     * The message to be sent.
+     */
+    message: any;
+
+    /**
+     * Optional array of transferable objects.
+     */
+    transfer?: Transferable[];
+}
+
+/**
+ * A noop function.
+ */
+function noOp() {
+    // noop
+}
+
+/**
+ * Implements message transport using the MessageChannel API.
+ *
+ * When shouldCreateChannel is true, a new MessageChannel is created and port2 is
+ * transferred to the target window via postMessage. When false, the backend listens
+ * for an incoming init_channel message carrying the port.
+ *
+ * Messages sent before the port is established (receiver side) are buffered and
+ * flushed automatically once the handshake completes.
  */
 export default class MessageChannelTransportBackend implements ITransportBackend {
     /**
@@ -46,19 +79,25 @@ export default class MessageChannelTransportBackend implements ITransportBackend
     private origin?: string;
 
     /**
+     * Messages buffered before the port was established on the receiver side.
+     * Flushed in order once the port becomes available.
+     */
+    private pendingMessages: IPendingMessage[];
+
+    /**
      * The MessagePort used for sending and receiving messages.
      */
     private port?: MessagePort;
 
     /**
-     * A scope identifier used to namespace or a shared secret for messages.
+     * A scope identifier used to namespace channel initialization messages.
      */
     private scope?: string;
 
     /**
      * Callback function for receiving messages.
      */
-    private _receiveCallback: (message: any) => void;
+    private receiveCallback: (message: any) => void;
 
     /**
      * Creates a new MessageChannelTransportBackend instance.
@@ -66,9 +105,14 @@ export default class MessageChannelTransportBackend implements ITransportBackend
      * @param {IMessageChannelTransportBackendOptions} options - Configuration options for the transport backend.
      */
     constructor({ shouldCreateChannel = false, targetWindow = window.parent, origin, scope }: IMessageChannelTransportBackendOptions) {
-        this._initialMessageHandler = this._initialMessageHandler.bind(this);
+        this.initialMessageHandler = this.initialMessageHandler.bind(this);
         this.origin = origin;
         this.scope = scope;
+        this.pendingMessages = [];
+
+        // Do nothing until a callback is set by the consumer of
+        // MessageChannelTransportBackend via setReceiveCallback.
+        this.receiveCallback = noOp;
 
         if (shouldCreateChannel) {
             this.channel = new MessageChannel();
@@ -77,20 +121,11 @@ export default class MessageChannelTransportBackend implements ITransportBackend
                 type: 'init_channel',
                 scope: this.scope
             }, origin ?? '*', [ this.channel.port2 ]);
-        } else {
-            window.addEventListener('message', this._initialMessageHandler);
-        }
-
-
-        this._receiveCallback = () => {
-            // Do nothing until a callback is set by the consumer of
-            // MessageChannelTransportBackend via setReceiveCallback.
-        };
-
-        if (this.port) {
             this.port.onmessage = (event: MessageEvent) => {
-                this._receiveCallback(event.data);
+                this.receiveCallback(event.data);
             };
+        } else {
+            window.addEventListener('message', this.initialMessageHandler);
         }
     }
 
@@ -99,21 +134,32 @@ export default class MessageChannelTransportBackend implements ITransportBackend
      *
      * @param {MessageEvent} event - The incoming message event.
      */
-    _initialMessageHandler(event: MessageEvent) {
+    private initialMessageHandler(event: MessageEvent) {
         if (this.origin && event.origin !== this.origin) {
             return;
         }
 
         const { data, ports } = event;
 
-        // TODO: For security maybe add common secret (maybe passed trough the URL of an iframe)
+        // TODO: For security maybe add common secret (maybe passed through the URL of an iframe)
         if (data?.type === 'init_channel' && data.scope === this.scope && ports?.length) {
             this.port = event.ports[0];
             this.port.onmessage = (ev: MessageEvent) => {
-                this._receiveCallback(ev.data);
+                this.receiveCallback(ev.data);
             };
-            window.removeEventListener('message', this._initialMessageHandler);
+            window.removeEventListener('message', this.initialMessageHandler);
+            this.flushPendingMessages();
         }
+    }
+
+    /**
+     * Flushes any messages that were buffered before the port was established.
+     */
+    private flushPendingMessages(): void {
+        for (const { message, transfer } of this.pendingMessages) {
+            this.port?.postMessage(message, transfer ? { transfer } : undefined);
+        }
+        this.pendingMessages = [];
     }
 
     /**
@@ -123,20 +169,27 @@ export default class MessageChannelTransportBackend implements ITransportBackend
      */
     dispose(): void {
         this.port?.close();
-        delete this.port;
-        delete this.channel;
-        window.removeEventListener('message', this._initialMessageHandler);
+        this.port = undefined;
+        this.channel = undefined;
+        this.pendingMessages = [];
+        this.receiveCallback = noOp;
+        window.removeEventListener('message', this.initialMessageHandler);
     }
 
     /**
-     * Sends the passed message.
+     * Sends the passed message. If the port has not yet been established (receiver side),
+     * the message is buffered and will be sent once the handshake completes.
      *
      * @param {any} message - The message to be sent.
-     * @param {Array<any>} [transfer] - Optional array of transferable objects.
+     * @param {Transferable[]} [transfer] - Optional array of transferable objects.
      * @returns {void}
      */
     send(message: any, transfer?: Transferable[]): void {
-        this.port?.postMessage(message, { transfer });
+        if (this.port) {
+            this.port.postMessage(message, transfer ? { transfer } : undefined);
+        } else {
+            this.pendingMessages.push({ message, transfer });
+        }
     }
 
     /**
@@ -146,6 +199,6 @@ export default class MessageChannelTransportBackend implements ITransportBackend
      * @returns {void}
      */
     setReceiveCallback(callback: (message: any) => void): void {
-        this._receiveCallback = callback;
+        this.receiveCallback = callback;
     }
 }
