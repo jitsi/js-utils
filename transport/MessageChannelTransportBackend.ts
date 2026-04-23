@@ -50,21 +50,16 @@ interface IPendingMessage {
 }
 
 /**
- * A noop function.
- */
-function noOp() {
-    // noop
-}
-
-/**
  * Implements message transport using the MessageChannel API.
  *
  * When shouldCreateChannel is true, a new MessageChannel is created and port2 is
  * transferred to the target window via postMessage. When false, the backend listens
  * for an incoming init_channel message carrying the port.
  *
- * Messages sent before the port is established (receiver side) are buffered and
- * flushed automatically once the handshake completes.
+ * Outgoing messages sent before the port is established (receiver side) are buffered and
+ * flushed automatically once the handshake completes. Incoming messages are buffered
+ * natively by the MessagePort until a receive callback is wired via setReceiveCallback,
+ * since assigning onmessage implicitly starts the port.
  */
 export default class MessageChannelTransportBackend implements ITransportBackend {
     /**
@@ -95,9 +90,10 @@ export default class MessageChannelTransportBackend implements ITransportBackend
     private scope?: string;
 
     /**
-     * Callback function for receiving messages.
+     * Callback function for receiving messages. Undefined until setReceiveCallback is called;
+     * while undefined the MessagePort remains unstarted and buffers incoming messages natively.
      */
-    private receiveCallback: (message: any) => void;
+    private receiveCallback?: (message: any) => void;
 
     /**
      * Creates a new MessageChannelTransportBackend instance.
@@ -110,10 +106,6 @@ export default class MessageChannelTransportBackend implements ITransportBackend
         this.scope = scope;
         this.pendingMessages = [];
 
-        // Do nothing until a callback is set by the consumer of
-        // MessageChannelTransportBackend via setReceiveCallback.
-        this.receiveCallback = noOp;
-
         if (shouldCreateChannel) {
             this.channel = new MessageChannel();
             this.port = this.channel.port1;
@@ -121,9 +113,6 @@ export default class MessageChannelTransportBackend implements ITransportBackend
                 type: 'init_channel',
                 scope: this.scope
             }, origin ?? '*', [ this.channel.port2 ]);
-            this.port.onmessage = (event: MessageEvent) => {
-                this.receiveCallback(event.data);
-            };
         } else {
             window.addEventListener('message', this.initialMessageHandler);
         }
@@ -144,13 +133,26 @@ export default class MessageChannelTransportBackend implements ITransportBackend
         // TODO: For security maybe add common secret (maybe passed through the URL of an iframe)
         if (data?.type === 'init_channel' && data.scope === this.scope && ports?.length) {
             this.port = event.ports[0];
-            this.port.onmessage = (ev: MessageEvent) => {
-                this.receiveCallback(ev.data);
-            };
+
+            // Only start the port (via onmessage assignment) if the consumer has already wired
+            // a receive callback. Otherwise let the port buffer incoming messages natively until
+            // setReceiveCallback is called.
+            if (this.receiveCallback) {
+                this.port.onmessage = this.handlePortMessage;
+            }
             window.removeEventListener('message', this.initialMessageHandler);
             this.flushPendingMessages();
         }
     }
+
+    /**
+     * Forwards messages from the MessagePort to the current receive callback.
+     *
+     * @param {MessageEvent} event - The incoming port message event.
+     */
+    private handlePortMessage = (event: MessageEvent): void => {
+        this.receiveCallback?.(event.data);
+    };
 
     /**
      * Flushes any messages that were buffered before the port was established.
@@ -172,7 +174,7 @@ export default class MessageChannelTransportBackend implements ITransportBackend
         this.port = undefined;
         this.channel = undefined;
         this.pendingMessages = [];
-        this.receiveCallback = noOp;
+        this.receiveCallback = undefined;
         window.removeEventListener('message', this.initialMessageHandler);
     }
 
@@ -193,12 +195,18 @@ export default class MessageChannelTransportBackend implements ITransportBackend
     }
 
     /**
-     * Sets the callback for receiving data.
+     * Sets the callback for receiving data. If the MessagePort is available and has not
+     * yet been started, this also starts it (by assigning onmessage), flushing any messages
+     * buffered natively by the port since the handshake completed.
      *
      * @param {Function} callback - The new callback.
      * @returns {void}
      */
     setReceiveCallback(callback: (message: any) => void): void {
         this.receiveCallback = callback;
+
+        if (this.port && !this.port.onmessage) {
+            this.port.onmessage = this.handlePortMessage;
+        }
     }
 }
