@@ -60,6 +60,13 @@ interface IPendingMessage {
  * flushed automatically once the handshake completes. Incoming messages are buffered
  * natively by the MessagePort until a receive callback is wired via setReceiveCallback,
  * since assigning onmessage implicitly starts the port.
+ *
+ * Re-handshake: on the receiver side the init_channel listener stays attached for the
+ * lifetime of the backend. If the creator (e.g. an iframe) self-navigates or reloads
+ * and posts a fresh init_channel, the receiver closes the previous (now-dead) port and
+ * adopts the new one transparently. MessageChannel exposes no liveness signal, so this
+ * "always re-adopt the latest matching port" policy is the only way to keep working
+ * across in-creator reloads without cooperation from the creator side.
  */
 export default class MessageChannelTransportBackend implements ITransportBackend {
     /**
@@ -121,6 +128,11 @@ export default class MessageChannelTransportBackend implements ITransportBackend
     /**
      * Handles the initial postMessage event to receive the MessagePort from the channel creator.
      *
+     * The listener remains attached for the lifetime of the backend so that if the creator
+     * self-reloads (its previous document and port1 are gone, leaving the receiver with an
+     * inert port2 that the platform never signals), a fresh init_channel can replace the
+     * dead port without cooperation from the creator.
+     *
      * @param {MessageEvent} event - The incoming message event.
      */
     private initialMessageHandler(event: MessageEvent) {
@@ -132,6 +144,10 @@ export default class MessageChannelTransportBackend implements ITransportBackend
 
         // TODO: For security maybe add common secret (maybe passed through the URL of an iframe)
         if (data?.type === 'init_channel' && data.scope === this.scope && ports?.length) {
+            // Release the previous port (if any) before adopting the new one. Closing also
+            // detaches its onmessage handler, so no stale messages can still be dispatched.
+            this.port?.close();
+
             this.port = event.ports[0];
 
             // Only start the port (via onmessage assignment) if the consumer has already wired
@@ -140,7 +156,6 @@ export default class MessageChannelTransportBackend implements ITransportBackend
             if (this.receiveCallback) {
                 this.port.onmessage = this.handlePortMessage;
             }
-            window.removeEventListener('message', this.initialMessageHandler);
             this.flushPendingMessages();
         }
     }
