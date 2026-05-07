@@ -17,7 +17,7 @@ export interface ITransportBackend {
      * @param {any} message - The message to send.
      * @returns {void}
      */
-    send: (message: any) => void;
+    send: (message: any, transfer?: Transferable[]) => void;
 
     /**
      * Sets the callback function to handle received messages.
@@ -43,7 +43,7 @@ export type TransportListener = (...args: any[]) => boolean | void;
 /**
  * Response callback type for handling request/response pattern.
  */
-export type ResponseCallback = (result: any, error?: any) => void;
+export type ResponseCallback = (result: any, error?: any, transfer?: Transferable[]) => void;
 
 /**
  * Message types for transport communication.
