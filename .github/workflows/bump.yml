@@ -1,4 +1,4 @@
-name: "AutoPublish"
+name: "Bump version"
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - "master"
 
 jobs:
-  auto-publish:
-    name: "AutoPublish on master"
+  bump:
+    name: "Bump version on master"
     runs-on: ubuntu-latest
     if: "!startsWith(github.event.head_commit.message, 'chore: bump version to')"
 
@@ -19,7 +19,7 @@ jobs:
           app-id: ${{ secrets.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - name: "Checkout source code"
-        uses: "actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd"  # v5
+        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd"  # v6.0.2
         with:
           token: ${{ steps.app-token.outputs.token }}
       - name: "Automated Release"
@@ -28,12 +28,3 @@ jobs:
           commit-message: 'chore: bump version to {{version}}'
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f  # v6
-        with:
-          node-version: '18'
-          registry-url: 'https://registry.npmjs.org'
-      - name: "Install dependencies"
-        run: npm install
-      - run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
