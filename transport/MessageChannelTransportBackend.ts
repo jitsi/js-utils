@@ -142,7 +142,6 @@ export default class MessageChannelTransportBackend implements ITransportBackend
 
         const { data, ports } = event;
 
-        // TODO: For security maybe add common secret (maybe passed through the URL of an iframe)
         if (data?.type === 'init_channel' && data.scope === this.scope && ports?.length) {
             // Release the previous port (if any) before adopting the new one. Closing also
             // detaches its onmessage handler, so no stale messages can still be dispatched.
