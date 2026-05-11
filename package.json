@@ -55,9 +55,17 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./json": {
+      "types": "./dist/json.d.ts",
+      "default": "./dist/json.js"
+    },
+    "./polyfills/*": {
+      "types": "./dist/polyfills/*.d.ts",
+      "default": "./dist/polyfills/*.js"
+    },
     "./*": {
-      "types": "./dist/*",
-      "default": "./dist/*"
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
     }
   },
   "files": [
