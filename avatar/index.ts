@@ -1,4 +1,4 @@
-import md5 from 'js-md5';
+import md5 from 'spark-md5'; // swaped
 
 /**
  * Returns the Gravatar URL of a given email id.
@@ -11,7 +11,7 @@ export function getGravatarURL(key: string, baseURL: string = 'https://www.grava
     const urlSuffix = '?d=404&size=200';
 
     // If the key is a valid email, we hash it. If it's not, we assume it's already a hashed format.
-    const avatarKey: string = isValidEmail(key) ? md5.hex(key.trim().toLowerCase()) : key;
+    const avatarKey: string = isValidEmail(key) ? md5.hash(key.trim().toLowerCase()) : key;  // there is used hex before now is hash
 
     return `${baseURL}${avatarKey}${urlSuffix}`;
 }
