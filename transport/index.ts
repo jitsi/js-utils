@@ -1,4 +1,5 @@
 export { MessageType } from './constants';
+export { default as EmbeddedTransportBackend } from './EmbeddedTransportBackend';
 export { default as MessageChannelTransportBackend } from './MessageChannelTransportBackend';
 export type { IMessageChannelTransportBackendOptions } from './MessageChannelTransportBackend';
 export { default as PostMessageTransportBackend } from './PostMessageTransportBackend';
