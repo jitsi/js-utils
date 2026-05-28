@@ -46,9 +46,10 @@ export default class EmbeddedTransportBackend implements ITransportBackend {
      * Sends the passed message.
      *
      * @param {Object} message - The message to be sent.
+     * @param {Transferable[]} [_transfer] - Ignored; included to satisfy ITransportBackend.
      * @returns {void}
      */
-    send(message: any): void {
+    send(message: any, _transfer?: Transferable[]): void {
         this._otherEnd?._receiveCallback(message);
     }
 
