@@ -26,5 +26,12 @@ jobs:
         uses: "phips28/gh-action-bump-version@215e27a882516826c59df7f09da8c67d5f375cbd"  # master
         with:
           commit-message: 'chore: bump version to {{version}}'
+          # The action's default word lists substring-match 'major'/'minor'
+          # anywhere in the commit message, and dependabot commit footers
+          # contain 'version-update:semver-major/-minor' — which escalated
+          # 6.3.2 to 12.0.0 (2026-07) and 2.8.2 to 6.0.0 (2025-10) from
+          # routine dependency updates. React only to deliberate markers.
+          major-wording: 'BREAKING CHANGE'
+          minor-wording: 'feat:,feat('
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
