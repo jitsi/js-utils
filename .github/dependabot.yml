@@ -21,6 +21,12 @@ updates:
       - "npm"
     commit-message:
       prefix: "build(deps)"
+    # ua-parser-js changed its license from MIT to AGPL-3.0-or-later in v2.0,
+    # which is incompatible with this package's Apache-2.0 license. Any bump
+    # past 1.x requires a license review first (see PRs #107, #132, #147).
+    ignore:
+      - dependency-name: "ua-parser-js"
+        versions: [">=2.0.0"]
     # Group updates to reduce PR noise
     groups:
       development-dependencies:
