@@ -5,6 +5,11 @@ on:
     branches: [master, main]
   pull_request:
 
+# Dependabot-triggered runs get a read-only GITHUB_TOKEN unless permissions are
+# declared explicitly, which made the check-runs API call in the test job fail.
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
@@ -26,6 +31,11 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    # The "Create test results check" step posts to the check-runs API, which
+    # needs checks:write.
+    permissions:
+      contents: read
+      checks: write
     steps:
     - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5
 
