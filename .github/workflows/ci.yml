@@ -68,6 +68,10 @@ jobs:
 
     - name: Create test results check
       if: always() && github.event_name == 'pull_request'
+      # Fork PRs run with a read-only token that permissions can't elevate;
+      # this reporting step must not fail the job when check creation is
+      # rejected, since the results are also in the step summary.
+      continue-on-error: true
       uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b  # v7
       with:
         script: |
