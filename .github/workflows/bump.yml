@@ -23,7 +23,7 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
       - name: "Automated Release"
-        uses: "phips28/gh-action-bump-version@215e27a882516826c59df7f09da8c67d5f375cbd"  # master
+        uses: "phips28/gh-action-bump-version@e25d05e139958e4b7688a467846f673eaf86ce47"  # master
         with:
           commit-message: 'chore: bump version to {{version}}'
           # The action's default word lists substring-match 'major'/'minor'
