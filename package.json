@@ -30,7 +30,7 @@
     "@typescript-eslint/parser": "8.65.0",
     "@web/dev-server-esbuild": "1.0.4",
     "@web/dev-server-rollup": "0.6.4",
-    "@web/test-runner": "0.20.2",
+    "@web/test-runner": "1.0.0",
     "eslint": "8.57.1",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-typescript-sort-keys": "3.3.0",
