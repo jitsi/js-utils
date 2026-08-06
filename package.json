@@ -14,7 +14,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
-    "@hapi/bourne": "3.0.0",
+    "@hapi/bourne": "4.0.1",
     "js-md5": "0.7.3",
     "ua-parser-js": "1.0.35"
   },
