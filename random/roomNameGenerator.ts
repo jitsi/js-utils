@@ -449,7 +449,7 @@ const _PLURALNOUN_: readonly string[] = [
     'Sorts', 'Souls', 'Sounds', 'Soups', 'Sources',
     'Sovereignties', 'Spaces', 'Spams', 'Spans', 'Speakers', 'Specialists',
     'Species', 'Specifications', 'Specimens', 'Spectacles', 'Spectators',
-    'Spectra', 'Speculations', 'Speeches', 'Speeds', 'Spellings', 'Spells',
+    'Speculations', 'Speeches', 'Speeds', 'Spellings', 'Spells',
     'Spendings', 'Spheres', 'Spices', 'Spiders', 'Spies', 'Spines', 'Spins',
     'Spirits', 'Spites', 'Splits', 'Spokesmen', 'Spokespeople', 'Sponsors',
     'Sponsorships', 'Spoons', 'Sports', 'Spotlights', 'Spots', 'Spouses',
@@ -714,7 +714,7 @@ const _VERB_: readonly string[] = [
     'Tidy', 'Tie', 'Tighten', 'Time', 'Tip', 'Title', 'Tolerate', 'Top',
     'Toss', 'Total', 'Touch', 'Tour', 'Trace', 'Track', 'Trade',
     'Trail', 'Train', 'Transfer', 'Transform', 'Translate', 'Transmit',
-    'Transport', 'Trap', 'Travel', 'Treat', 'Trick', 'Trigger', 'Trip',
+    'Transport', 'Travel', 'Treat', 'Trick', 'Trigger', 'Trip',
     'Trouble', 'Trust', 'Try', 'Turn', 'Twist', 'Type', 'Undergo',
     'Undermine', 'Understand', 'Undertake', 'Unfold', 'Unify', 'Unite',
     'Unveil', 'Update', 'Upgrade', 'Uphold', 'Upset', 'Urge', 'Use',
@@ -723,7 +723,7 @@ const _VERB_: readonly string[] = [
     'Wander', 'Want', 'Warm', 'Warn', 'Warrant', 'Wash', 'Waste', 'Watch',
     'Water', 'Wave', 'Weaken', 'Wear', 'Weave', 'Weigh', 'Welcome', 'Whip',
     'Whisper', 'Widen', 'Win', 'Wind', 'Wipe', 'Wish', 'Withdraw',
-    'Witness', 'Wonder', 'Work', 'Worry', 'Worship', 'Wound', 'Wrap',
+    'Witness', 'Wonder', 'Work', 'Worry', 'Worship', 'Wound',
     'Write', 'Yell', 'Yield'
 ];
 
@@ -878,7 +878,7 @@ const _ADJECTIVE_: readonly string[] = [
     'Excellent', 'Exceptional', 'Excess', 'Excessive', 'Excited',
     'Exciting', 'Exclusive', 'Executive', 'Exotic', 'Expected', 'Expensive',
     'Experienced', 'Experimental', 'Expert', 'Explicit', 'Explosive',
-    'Extensive', 'External', 'Extra', 'Extraordinary', 'Extreme',
+    'Extensive', 'External', 'Extraordinary', 'Extreme',
     'Fabulous', 'Failed', 'Fair', 'Fake', 'False', 'Familiar', 'Family',
     'Famous', 'Fancy', 'Fantastic', 'Far', 'Fascinating', 'Fashionable',
     'Fast', 'Fat', 'Fatal', 'Favourable', 'Favourite', 'Federal', 'Fellow',
