@@ -407,6 +407,50 @@ describe('BrowserDetection', () => {
             }
         });
 
+        describe('getOSVersion on iOS with a frozen OS token', () => {
+            let originalUserAgent: PropertyDescriptor | undefined;
+
+            const withUserAgent = (userAgent: string): BrowserDetection => {
+                Object.defineProperty(navigator, 'userAgent', {
+                    configurable: true,
+                    value: userAgent
+                });
+
+                return new BrowserDetection();
+            };
+
+            beforeEach(() => {
+                originalUserAgent = Object.getOwnPropertyDescriptor(navigator, 'userAgent');
+            });
+
+            afterEach(() => {
+                if (originalUserAgent) {
+                    Object.defineProperty(navigator, 'userAgent', originalUserAgent);
+                }
+            });
+
+            it('prefers the Safari Version/ token over the frozen "CPU iPhone OS 18_7" on iOS 26', () => {
+                const detector = withUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) '
+                    + 'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Mobile/15E148 Safari/604.1');
+
+                expect(detector.getOSVersion()).to.equal('26.5');
+            });
+
+            it('keeps the UA OS version on iOS browsers without a Version/ token (Chrome on iOS)', () => {
+                const detector = withUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) '
+                    + 'AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/120.0.0.0 Mobile/15E148 Safari/604.1');
+
+                expect(detector.getOSVersion()).to.equal('15.2');
+            });
+
+            it('reads the real version from an older Safari UA', () => {
+                const detector = withUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) '
+                    + 'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1');
+
+                expect(detector.getOSVersion()).to.equal('12.1');
+            });
+        });
+
         it('should return false for isVersionLessThan when version is empty string', () => {
             const browserInfo = {
                 name: 'Chrome',
