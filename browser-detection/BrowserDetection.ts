@@ -236,10 +236,10 @@ export default class BrowserDetection {
         // iOS/iPadOS 26 freeze the "CPU iPhone OS XX" UA token (at 18_7); the Safari Version/ token still tracks
         // the real OS major version, so prefer it on iOS. Browsers without a Version/ token (e.g. Chrome/Firefox
         // on iOS) keep the UA OS version.
-        if (name === 'iOS') {
+        if (name === 'iOS' && version === '18.7') {
             const match = navigator.userAgent.match(/Version\/(\d[\w.]*)/);
 
-            if (match) {
+            if (match && parseInt(match[1], 10) >= 26) {
                 return match[1];
             }
         }
