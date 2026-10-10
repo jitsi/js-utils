@@ -16,7 +16,7 @@
   "dependencies": {
     "@hapi/bourne": "4.0.1",
     "js-md5": "0.7.3",
-    "ua-parser-js": "1.0.35"
+    "ua-parser-js": "1.0.41"
   },
   "devDependencies": {
     "@esm-bundle/chai": "4.3.4",
