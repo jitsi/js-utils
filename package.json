@@ -24,7 +24,7 @@
     "@rollup/plugin-commonjs": "^29.0.0",
     "@types/chai": "5.2.3",
     "@types/js-md5": "0.8.0",
-    "@types/node": "24.9.2",
+    "@types/node": "26.6.4",
     "@types/ua-parser-js": "0.7.39",
     "@typescript-eslint/eslint-plugin": "8.65.0",
     "@typescript-eslint/parser": "8.65.0",
